@@ -25,7 +25,7 @@ export default function AdminPage() {
     image_url: '',
     prize_title: '',
     prize_image_url: '',
-    prize_type: 'material' as const,
+    prize_type: 'material' as 'material' | 'experiencia' | 'digital',
     draw_date: '',
     end_date: '',
   })
@@ -116,7 +116,7 @@ export default function AdminPage() {
       image_url: '',
       prize_title: '',
       prize_image_url: '',
-      prize_type: 'material',
+      prize_type: 'material' as 'material' | 'experiencia' | 'digital',
       draw_date: '',
       end_date: '',
     })
