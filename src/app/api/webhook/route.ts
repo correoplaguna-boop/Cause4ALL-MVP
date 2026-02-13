@@ -51,33 +51,27 @@ export async function POST(request: NextRequest) {
           }
 
           // Record the donation
-          const donationResult = await recordDonation({
-            campaign_id: campaignId,
-            amount: totalAmount,
-            donation_portion: donationAmount,
-            product_portion: productAmount,
-            email: session.customer_email || '',
-            stripe_payment_id: session.payment_intent as string,
-            stripe_session_id: session.id,
-            enters_draw: true,
-            status: 'completed',
-          })
+          try {
+            await recordDonation({
+              campaign_id: campaignId,
+              amount: totalAmount,
+              donation_portion: donationAmount,
+              product_portion: productAmount,
+              email: session.customer_email || '',
+              stripe_payment_id: session.payment_intent as string,
+              stripe_session_id: session.id,
+              enters_draw: true,
+              status: 'completed',
+            })
 
-          if (donationResult && donationResult.error) {
-            console.error('[Webhook] Error recording donation:', donationResult.error)
-            return NextResponse.json({ error: 'Failed to record donation' }, { status: 500 })
-          }
+            console.log('[Webhook] Donation recorded successfully')
 
-          console.log('[Webhook] Donation recorded successfully:', donationResult?.data?.id)
-
-          // Update campaign total
-          const updateResult = await updateCampaignAmount(campaignId, totalAmount)
-          
-          if (updateResult && updateResult.error) {
-            console.error('[Webhook] Error updating campaign amount:', updateResult.error)
-            // Don't return error here, donation is already recorded
-          } else {
+            // Update campaign total
+            await updateCampaignAmount(campaignId, totalAmount)
             console.log('[Webhook] Campaign amount updated successfully')
+          } catch (dbError) {
+            console.error('[Webhook] Database error:', dbError)
+            return NextResponse.json({ error: 'Database error' }, { status: 500 })
           }
 
           console.log('[Webhook] Checkout session processed successfully')
