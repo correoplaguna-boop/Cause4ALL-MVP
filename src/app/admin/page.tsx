@@ -5,6 +5,10 @@ import { supabase, Campaign, Organization } from '@/lib/supabase'
 import Link from 'next/link'
 
 export default function AdminPage() {
+  // Authentication
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [password, setPassword] = useState('')
+
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [organizations, setOrganizations] = useState<Organization[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -14,6 +18,7 @@ export default function AdminPage() {
   // Form state
   const [formData, setFormData] = useState({
     organization_id: '',
+    organization_name: '',
     title: '',
     subtitle: '',
     slug: '',
@@ -30,9 +35,29 @@ export default function AdminPage() {
     end_date: '',
   })
 
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (password === 'Cause4All@98') { // Cambia esta contraseña por una más segura
+      setIsAuthenticated(true)
+      localStorage.setItem('admin_auth', 'true')
+    } else {
+      alert('Contraseña incorrecta')
+    }
+  }
+
   useEffect(() => {
-    loadData()
+    // Check if already authenticated
+    const authStored = localStorage.getItem('admin_auth')
+    if (authStored === 'true') {
+      setIsAuthenticated(true)
+    }
   }, [])
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadData()
+    }
+  }, [isAuthenticated])
 
   const loadData = async () => {
     setIsLoading(true)
@@ -68,8 +93,46 @@ export default function AdminPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    // First, create or find organization
+    let orgId = formData.organization_id
+
+    if (!orgId && formData.organization_name) {
+      // Create new organization
+      const { data: newOrg, error: orgError } = await supabase
+        .from('organizations')
+        .insert({
+          name: formData.organization_name,
+          type: 'asociacion',
+          email: 'info@' + generateSlug(formData.organization_name) + '.com',
+          location: 'España',
+        })
+        .select()
+        .single()
+
+      if (orgError) {
+        alert('Error al crear organización: ' + orgError.message)
+        return
+      }
+
+      orgId = newOrg.id
+    }
+
     const campaignData = {
-      ...formData,
+      organization_id: orgId,
+      title: formData.title,
+      subtitle: formData.subtitle,
+      slug: formData.slug,
+      description: formData.description,
+      cause_type: formData.cause_type,
+      goal_amount: formData.goal_amount,
+      product_price: formData.product_price,
+      donation_amount: formData.donation_amount,
+      image_url: formData.image_url || null,
+      prize_title: formData.prize_title || null,
+      prize_image_url: formData.prize_image_url || null,
+      prize_type: formData.prize_type,
+      draw_date: formData.draw_date || null,
+      end_date: formData.end_date || null,
       current_amount: editingCampaign?.current_amount || 0,
       status: 'active',
       start_date: new Date().toISOString(),
@@ -105,6 +168,7 @@ export default function AdminPage() {
   const resetForm = () => {
     setFormData({
       organization_id: '',
+      organization_name: '',
       title: '',
       subtitle: '',
       slug: '',
@@ -125,6 +189,7 @@ export default function AdminPage() {
   const handleEdit = (campaign: Campaign) => {
     setFormData({
       organization_id: campaign.organization_id,
+      organization_name: campaign.organization?.name || '',
       title: campaign.title,
       subtitle: campaign.subtitle || '',
       slug: campaign.slug,
@@ -136,9 +201,9 @@ export default function AdminPage() {
       image_url: campaign.image_url || '',
       prize_title: campaign.prize_title || '',
       prize_image_url: campaign.prize_image_url || '',
-      prize_type: campaign.prize_type || 'material',
-      draw_date: campaign.draw_date || '',
-      end_date: campaign.end_date || '',
+      prize_type: campaign.prize_type || 'material' as 'material' | 'experiencia' | 'digital',
+      draw_date: campaign.draw_date ? new Date(campaign.draw_date).toISOString().split('T')[0] : '',
+      end_date: campaign.end_date ? new Date(campaign.end_date).toISOString().split('T')[0] : '',
     })
     setEditingCampaign(campaign)
     setShowForm(true)
@@ -156,6 +221,39 @@ export default function AdminPage() {
     }
 
     loadData()
+  }
+
+  // Login screen
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-2xl shadow-lg max-w-md w-full">
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 bg-gradient-to-br from-primary-400 to-primary-500 rounded-xl flex items-center justify-center text-3xl mx-auto mb-4">
+              💝
+            </div>
+            <h1 className="font-display text-2xl font-bold text-gray-900">Panel Admin</h1>
+            <p className="text-gray-500 text-sm mt-2">Ingresa la contraseña para continuar</p>
+          </div>
+          <form onSubmit={handleLogin}>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Contraseña"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none mb-4"
+              autoFocus
+            />
+            <button type="submit" className="w-full btn-primary">
+              Acceder
+            </button>
+          </form>
+          <p className="text-xs text-gray-400 mt-4 text-center">
+            Contraseña predeterminada: cause4all2025
+          </p>
+        </div>
+      </div>
+    )
   }
 
   if (isLoading) {
@@ -181,16 +279,27 @@ export default function AdminPage() {
             <span className="text-gray-300">|</span>
             <span className="text-gray-600 font-medium">Panel Admin</span>
           </div>
-          <button
-            onClick={() => {
-              resetForm()
-              setEditingCampaign(null)
-              setShowForm(true)
-            }}
-            className="btn-primary text-sm"
-          >
-            + Nueva Campaña
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                resetForm()
+                setEditingCampaign(null)
+                setShowForm(true)
+              }}
+              className="btn-primary text-sm"
+            >
+              + Nueva Campaña
+            </button>
+            <button
+              onClick={() => {
+                localStorage.removeItem('admin_auth')
+                setIsAuthenticated(false)
+              }}
+              className="text-sm text-gray-500 hover:text-gray-700"
+            >
+              Cerrar sesión
+            </button>
+          </div>
         </div>
       </header>
 
@@ -220,28 +329,32 @@ export default function AdminPage() {
           <div className="px-6 py-4 border-b border-gray-100">
             <h2 className="font-display text-lg font-bold text-gray-900">Campañas</h2>
           </div>
-          
+
           {campaigns.length === 0 ? (
             <div className="p-12 text-center">
-              <div className="text-4xl mb-3">📭</div>
-              <p className="text-gray-500">No hay campañas todavía</p>
+              <p className="text-gray-500 mb-4">No hay campañas todavía</p>
               <button
-                onClick={() => setShowForm(true)}
-                className="mt-4 text-primary-500 font-semibold hover:underline"
+                onClick={() => {
+                  resetForm()
+                  setEditingCampaign(null)
+                  setShowForm(true)
+                }}
+                className="btn-primary text-sm"
               >
-                Crear la primera campaña
+                Crear primera campaña
               </button>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 border-b border-gray-100">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Campaña</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Organización</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Recaudado</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Estado</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Acciones</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Campaña</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Organización</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Meta</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Recaudado</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Estado</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Acciones</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -253,16 +366,19 @@ export default function AdminPage() {
                           <p className="text-sm text-gray-500">{campaign.subtitle}</p>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
-                        {campaign.organization?.name || '-'}
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {campaign.organization?.name || 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {campaign.goal_amount.toLocaleString('es-ES')}€
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm">
+                        <div>
                           <p className="font-semibold text-gray-900">
                             {campaign.current_amount.toLocaleString('es-ES')}€
                           </p>
-                          <p className="text-gray-500">
-                            de {campaign.goal_amount.toLocaleString('es-ES')}€
+                          <p className="text-xs text-gray-500">
+                            {((campaign.current_amount / campaign.goal_amount) * 100).toFixed(0)}%
                           </p>
                         </div>
                       </td>
@@ -270,12 +386,7 @@ export default function AdminPage() {
                         <select
                           value={campaign.status}
                           onChange={(e) => handleStatusChange(campaign, e.target.value)}
-                          className={`text-xs font-semibold px-2 py-1 rounded-full border-0 ${
-                            campaign.status === 'active' ? 'bg-green-100 text-green-700' :
-                            campaign.status === 'draft' ? 'bg-gray-100 text-gray-700' :
-                            campaign.status === 'ended' ? 'bg-blue-100 text-blue-700' :
-                            'bg-red-100 text-red-700'
-                          }`}
+                          className="text-sm rounded-lg border border-gray-200 px-3 py-1.5 outline-none focus:border-primary-400"
                         >
                           <option value="draft">Borrador</option>
                           <option value="active">Activa</option>
@@ -330,22 +441,22 @@ export default function AdminPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
-              {/* Organization */}
+              {/* Organization Name */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Organización *
+                  Nombre de la Organización *
                 </label>
-                <select
+                <input
+                  type="text"
                   required
-                  value={formData.organization_id}
-                  onChange={(e) => setFormData(prev => ({ ...prev, organization_id: e.target.value }))}
+                  value={formData.organization_name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, organization_name: e.target.value }))}
+                  placeholder="Ej: Club Deportivo Barcelona"
                   className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"
-                >
-                  <option value="">Seleccionar...</option>
-                  {organizations.map((org) => (
-                    <option key={org.id} value={org.id}>{org.name}</option>
-                  ))}
-                </select>
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Se creará automáticamente si no existe
+                </p>
               </div>
 
               {/* Title & Subtitle */}
