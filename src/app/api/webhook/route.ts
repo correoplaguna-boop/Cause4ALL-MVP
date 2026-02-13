@@ -63,17 +63,17 @@ export async function POST(request: NextRequest) {
             status: 'completed',
           })
 
-          if (donationResult.error) {
+          if (donationResult && donationResult.error) {
             console.error('[Webhook] Error recording donation:', donationResult.error)
             return NextResponse.json({ error: 'Failed to record donation' }, { status: 500 })
           }
 
-          console.log('[Webhook] Donation recorded successfully:', donationResult.data?.id)
+          console.log('[Webhook] Donation recorded successfully:', donationResult?.data?.id)
 
           // Update campaign total
           const updateResult = await updateCampaignAmount(campaignId, totalAmount)
           
-          if (updateResult.error) {
+          if (updateResult && updateResult.error) {
             console.error('[Webhook] Error updating campaign amount:', updateResult.error)
             // Don't return error here, donation is already recorded
           } else {
