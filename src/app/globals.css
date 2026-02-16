@@ -2,98 +2,147 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@500;600;700;800&display=swap');
+/* Importar fuentes desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 
 @layer base {
-  html {
-    font-family: 'DM Sans', system-ui, sans-serif;
+  :root {
+    --font-fraunces: 'Fraunces', Georgia, serif;
+    --font-dm-sans: 'DM Sans', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    
+    /* Variables CSS para consistencia */
+    --color-primary-50: #fff7ed;
+    --color-primary-500: #FF6B6B;
+    --color-primary-600: #f97316;
+    --color-secondary-500: #22c55e;
+    
+    /* Sombras CSS personalizadas */
+    --shadow-card: 0 0 0 1px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+    --shadow-card-hover: 0 0 0 1px rgba(0,0,0,0.03), 0 4px 12px rgba(0,0,0,0.05), 0 16px 32px rgba(0,0,0,0.06);
   }
-  
+
+  * {
+    @apply border-gray-200;
+  }
+
+  html {
+    @apply scroll-smooth antialiased;
+  }
+
   body {
-    @apply bg-warm-50 text-gray-800;
+    @apply font-sans text-gray-900 bg-gray-50;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-semibold tracking-tight;
   }
 }
 
 @layer components {
+  /* Botones mejorados */
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
   .btn-primary {
-    @apply px-6 py-3 bg-gradient-to-r from-primary-400 to-primary-500 text-white font-bold rounded-2xl 
-           shadow-lg shadow-primary-500/30 hover:shadow-xl hover:shadow-primary-500/40 
-           hover:-translate-y-0.5 transition-all duration-300;
+    @apply btn bg-primary-500 text-white hover:bg-primary-600 hover:shadow-glow focus:ring-primary-500 active:scale-95;
   }
-  
+
   .btn-secondary {
-    @apply px-6 py-3 bg-white text-gray-700 font-semibold rounded-2xl border-2 border-gray-200
-           hover:border-primary-300 hover:text-primary-500 transition-all duration-300;
+    @apply btn bg-secondary-500 text-white hover:bg-secondary-600 focus:ring-secondary-500 active:scale-95;
   }
-  
+
+  .btn-outline {
+    @apply btn border-2 border-gray-300 text-gray-700 hover:border-primary-500 hover:text-primary-600 focus:ring-primary-500;
+  }
+
+  .btn-ghost {
+    @apply btn text-gray-600 hover:text-primary-600 hover:bg-primary-50;
+  }
+
+  /* Cards mejoradas */
   .card {
-    @apply bg-white rounded-3xl p-6 shadow-lg shadow-black/5;
+    @apply bg-white rounded-2xl shadow-card transition-shadow duration-300;
   }
-  
-  .card-warm {
-    @apply bg-gradient-to-br from-orange-50 to-orange-100 rounded-3xl p-6 border-2 border-orange-200/50;
+
+  .card-hover {
+    @apply card hover:shadow-card-hover hover:-translate-y-1;
   }
-  
-  .card-success {
-    @apply bg-gradient-to-br from-green-50 to-green-100 rounded-3xl p-6;
+
+  /* Inputs mejorados */
+  .input {
+    @apply w-full px-4 py-3 rounded-xl border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:border-primary-500 focus:ring-primary-500 transition-colors;
+  }
+
+  /* Badges de estado */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-active {
+    @apply badge bg-green-100 text-green-800;
+  }
+
+  .badge-urgent {
+    @apply badge bg-amber-100 text-amber-800;
+  }
+
+  .badge-closed {
+    @apply badge bg-gray-100 text-gray-800;
+  }
+
+  /* Progress bar animado */
+  .progress-bar {
+    @apply h-2 bg-gray-200 rounded-full overflow-hidden;
+  }
+
+  .progress-bar-fill {
+    @apply h-full bg-gradient-to-r from-primary-400 to-primary-500 rounded-full transition-all duration-1000 ease-out;
+  }
+
+  /* Efectos de glassmorphism para elementos destacados */
+  .glass {
+    @apply bg-white/80 backdrop-blur-md border border-white/20;
+  }
+
+  /* Utilidades para la landing de campaña */
+  .campaign-hero {
+    @apply relative overflow-hidden bg-gradient-to-br from-primary-50 via-white to-secondary-50;
+  }
+
+  .campaign-hero::before {
+    content: '';
+    @apply absolute inset-0 bg-mesh opacity-50;
+  }
+
+  /* Animación de contador */
+  .counter {
+    @apply font-display font-bold tabular-nums;
   }
 }
 
 @layer utilities {
-  .animate-delay-100 {
-    animation-delay: 0.1s;
-  }
-  .animate-delay-200 {
-    animation-delay: 0.2s;
-  }
-  .animate-delay-300 {
-    animation-delay: 0.3s;
-  }
-  .animate-delay-400 {
-    animation-delay: 0.4s;
-  }
-  
   .text-balance {
     text-wrap: balance;
   }
-}
 
-/* Progress bar shine effect */
-.progress-shine {
-  position: relative;
-  overflow: hidden;
-}
-
-.progress-shine::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  animation: progress-shine 2s infinite;
-}
-
-@keyframes progress-shine {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(200%); }
-}
-
-/* Confetti animation */
-.confetti {
-  position: fixed;
-  top: -20px;
-  animation: confetti-fall 3s ease-out forwards;
-}
-
-@keyframes confetti-fall {
-  0% { 
-    transform: translateY(0) rotate(0deg); 
-    opacity: 1; 
+  .animation-delay-200 {
+    animation-delay: 200ms;
   }
-  100% { 
-    transform: translateY(100vh) rotate(720deg); 
-    opacity: 0; 
+
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  /* Ocultar scrollbar pero mantener funcionalidad */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
