@@ -122,11 +122,11 @@ export default async function HomePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {campaigns.map((campaign) => {
               const progress = (campaign.current_amount / campaign.goal_amount) * 100
-              const causeIcons = {
-                escolar: '🎓',
-                deportiva: '⚽',
-                social: '💚',
-              }
+              const causeIcons: Record<string, string> = {
+  escolar: '🎓',
+  deportiva: '⚽',
+  social: '💚',
+}
 
               return (
                 <Link
