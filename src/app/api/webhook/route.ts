@@ -3,7 +3,7 @@ import Stripe from 'stripe'
 import { recordDonation, updateCampaignAmount } from '@/lib/supabase'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-04-10',  // ✅ Correcto
+  apiVersion: '2024-04-10',
 })
 
 export async function POST(request: NextRequest) {
@@ -35,13 +35,13 @@ export async function POST(request: NextRequest) {
       metadata: session.metadata,
     })
 
-    const campaignId = session.metadata?.campaignId
-    const donationAmount = parseFloat(session.metadata?.donationAmount || '0')
+    const campaignId = session.metadata?.campaign_id
+    const donationAmount = parseFloat(session.metadata?.donation_amount || '0')
     const totalAmount = session.amount_total ? session.amount_total / 100 : 0
 
     if (!campaignId) {
-      console.error('[Webhook] Missing campaignId in metadata')
-      return NextResponse.json({ error: 'Missing campaignId' }, { status: 400 })
+      console.error('[Webhook] Missing campaign_id in metadata')
+      return NextResponse.json({ error: 'Missing campaign_id' }, { status: 400 })
     }
 
     if (!donationAmount || donationAmount <= 0) {
