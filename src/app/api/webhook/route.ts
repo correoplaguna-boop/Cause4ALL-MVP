@@ -1,115 +1,85 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { constructWebhookEvent } from '@/lib/stripe'
-import { recordDonation, updateCampaignAmount } from '@/lib/supabase'
 import Stripe from 'stripe'
+import { recordDonation, updateCampaignAmount } from '@/lib/supabase'
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-11-20.acacia',
+})
 
 export async function POST(request: NextRequest) {
   const body = await request.text()
-  const signature = request.headers.get('stripe-signature')
-
-  console.log('[Webhook] Received request')
-
-  if (!signature) {
-    console.error('[Webhook] Missing Stripe signature')
-    return NextResponse.json({ error: 'Missing signature' }, { status: 400 })
-  }
+  const signature = request.headers.get('stripe-signature')!
 
   let event: Stripe.Event
 
   try {
-    event = constructWebhookEvent(body, signature)
-    console.log('[Webhook] Event verified:', event.type, 'ID:', event.id)
-  } catch (error) {
-    console.error('[Webhook] Signature verification failed:', error)
+    event = stripe.webhooks.constructEvent(
+      body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET!
+    )
+  } catch (err) {
+    console.error('[Webhook] Signature verification failed:', err)
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
-  // Handle the event
-  try {
-    switch (event.type) {
-      case 'checkout.session.completed': {
-        const session = event.data.object as Stripe.Checkout.Session
-        console.log('[Webhook] Processing checkout.session.completed:', session.id)
+  console.log('[Webhook] Event received:', event.type)
 
-        if (session.payment_status === 'paid') {
-          const campaignId = session.metadata?.campaign_id
-          const donationAmount = parseFloat(session.metadata?.donation_amount || '0')
-          const productAmount = parseFloat(session.metadata?.product_amount || '0')
-          const totalAmount = (session.amount_total || 0) / 100
+  // Handle different event types
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object as Stripe.Checkout.Session
 
-          console.log('[Webhook] Payment details:', {
-            campaignId,
-            totalAmount,
-            donationAmount,
-            productAmount,
-            email: session.customer_email
-          })
+    console.log('[Webhook] Checkout completed:', {
+      sessionId: session.id,
+      amount: session.amount_total,
+      metadata: session.metadata,
+    })
 
-          if (!campaignId) {
-            console.error('[Webhook] Missing campaign_id in metadata')
-            return NextResponse.json({ error: 'Missing campaign_id' }, { status: 400 })
-          }
+    const campaignId = session.metadata?.campaignId
+    const donationAmount = parseFloat(session.metadata?.donationAmount || '0')
+    const totalAmount = session.amount_total ? session.amount_total / 100 : 0
 
-          // Record the donation
-          try {
-            await recordDonation({
-              campaign_id: campaignId,
-              amount: totalAmount,
-              donation_portion: donationAmount,
-              product_portion: productAmount,
-              email: session.customer_email || '',
-              stripe_payment_id: session.payment_intent as string,
-              stripe_session_id: session.id,
-              enters_draw: true,
-              status: 'completed',
-            })
-
-            console.log('[Webhook] Donation recorded successfully')
-
-            // Update campaign total
-            await updateCampaignAmount(campaignId, totalAmount)
-            console.log('[Webhook] Campaign amount updated successfully')
-          } catch (dbError) {
-            console.error('[Webhook] Database error:', dbError)
-            return NextResponse.json({ error: 'Database error' }, { status: 500 })
-          }
-
-          console.log('[Webhook] Checkout session processed successfully')
-        } else {
-          console.log('[Webhook] Payment status not paid:', session.payment_status)
-        }
-        break
-      }
-
-      case 'payment_intent.payment_failed': {
-        const paymentIntent = event.data.object as Stripe.PaymentIntent
-        console.error('[Webhook] Payment failed:', {
-          id: paymentIntent.id,
-          amount: paymentIntent.amount / 100,
-          currency: paymentIntent.currency,
-          last_error: paymentIntent.last_payment_error?.message
-        })
-        break
-      }
-
-      case 'payment_intent.succeeded': {
-        const paymentIntent = event.data.object as Stripe.PaymentIntent
-        console.log('[Webhook] Payment succeeded:', {
-          id: paymentIntent.id,
-          amount: paymentIntent.amount / 100
-        })
-        break
-      }
-
-      default:
-        console.log(`[Webhook] Unhandled event type: ${event.type}`)
+    if (!campaignId) {
+      console.error('[Webhook] Missing campaignId in metadata')
+      return NextResponse.json({ error: 'Missing campaignId' }, { status: 400 })
     }
-  } catch (error) {
-    console.error('[Webhook] Error processing event:', error)
-    return NextResponse.json({ 
-      error: 'Webhook handler failed',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 })
+
+    if (!donationAmount || donationAmount <= 0) {
+      console.error('[Webhook] Invalid donationAmount:', donationAmount)
+      return NextResponse.json({ error: 'Invalid donationAmount' }, { status: 400 })
+    }
+
+    // Record donation in database
+    try {
+      await recordDonation({
+        campaign_id: campaignId,
+        amount: totalAmount,
+        donation_amount: donationAmount,
+        customer_email: session.customer_details?.email || null,
+        stripe_session_id: session.id,
+        status: 'completed',
+      })
+      
+      console.log('[Webhook] Donation recorded successfully')
+      
+      // Update campaign amount with ONLY the donation amount
+      await updateCampaignAmount(campaignId, donationAmount)
+      
+      console.log('[Webhook] Campaign amount updated successfully with donation:', donationAmount)
+    } catch (dbError) {
+      console.error('[Webhook] Database error:', dbError)
+      return NextResponse.json({ error: 'Database error' }, { status: 500 })
+    }
+  }
+
+  if (event.type === 'payment_intent.succeeded') {
+    const paymentIntent = event.data.object as Stripe.PaymentIntent
+    console.log('[Webhook] Payment succeeded:', paymentIntent.id)
+  }
+
+  if (event.type === 'payment_intent.payment_failed') {
+    const paymentIntent = event.data.object as Stripe.PaymentIntent
+    console.error('[Webhook] Payment failed:', paymentIntent.id)
   }
 
   return NextResponse.json({ received: true })
