@@ -47,13 +47,10 @@ export interface Donation {
   id: string
   campaign_id: string
   amount: number
-  donation_portion: number
-  product_portion: number
-  email: string
-  name?: string
-  stripe_payment_id: string
+  donation_amount: number
+  customer_email: string | null
+  stripe_payment_id?: string
   stripe_session_id?: string
-  enters_draw: boolean
   status: 'pending' | 'completed' | 'failed' | 'refunded'
   created_at: string
 }
@@ -111,10 +108,10 @@ export async function recordDonation(donation: Omit<Donation, 'id' | 'created_at
   return data
 }
 
-export async function updateCampaignAmount(campaignId: string, amount: number): Promise<boolean> {
+export async function updateCampaignAmount(campaignId: string, donationAmount: number): Promise<boolean> {
   const { error } = await supabase.rpc('increment_campaign_amount', {
     campaign_id: campaignId,
-    amount: amount
+    amount: donationAmount
   })
 
   if (error) {
@@ -144,7 +141,7 @@ export async function getDonationsByCampaign(campaignId: string): Promise<Donati
 export async function getCampaignStats(campaignId: string) {
   const { data, error } = await supabase
     .from('donations')
-    .select('amount, enters_draw')
+    .select('donation_amount')
     .eq('campaign_id', campaignId)
     .eq('status', 'completed')
 
@@ -155,7 +152,7 @@ export async function getCampaignStats(campaignId: string) {
 
   return {
     totalDonations: data?.length || 0,
-    totalAmount: data?.reduce((sum, d) => sum + d.amount, 0) || 0,
-    drawParticipants: data?.filter(d => d.enters_draw).length || 0
+    totalAmount: data?.reduce((sum, d) => sum + d.donation_amount, 0) || 0,
+    drawParticipants: data?.length || 0
   }
 }
