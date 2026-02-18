@@ -141,7 +141,7 @@ export async function getDonationsByCampaign(campaignId: string): Promise<Donati
 export async function getCampaignStats(campaignId: string) {
   const { data, error } = await supabase
     .from('donations')
-    .select('donation_amount')
+    .select('*')
     .eq('campaign_id', campaignId)
     .eq('status', 'completed')
 
