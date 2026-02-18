@@ -29,12 +29,7 @@ export default async function HomePage() {
               className="h-12 w-auto"
             />
           </Link>
-          <Link
-            href="/admin"
-            className="px-6 py-2.5 bg-white border-2 border-blue-600 text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-all duration-200"
-          >
-            Panel Admin
-          </Link>
+          
         </div>
       </header>
 
@@ -54,13 +49,7 @@ export default async function HomePage() {
           >
             Ver campañas activas
           </Link>
-          <Link
-            href="/admin"
-            className="px-8 py-4 bg-white border-2 border-green-600 text-green-600 font-semibold rounded-xl hover:bg-green-50 transition-all duration-200"
-          >
-            Crear mi campaña
-          </Link>
-        </div>
+                  </div>
       </section>
 
       {/* Features */}
@@ -258,12 +247,7 @@ export default async function HomePage() {
           <p className="text-xl mb-8 text-blue-100">
             Crea tu campaña en minutos y empieza a recaudar fondos hoy
           </p>
-          <Link
-            href="/admin"
-            className="inline-block px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-200"
-          >
-            Crear mi campaña gratis
-          </Link>
+          
         </div>
       </section>
 
