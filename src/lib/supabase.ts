@@ -141,7 +141,7 @@ export async function getDonationsByCampaign(campaignId: string): Promise<Donati
 export async function getCampaignStats(campaignId: string) {
   const { data, error } = await supabase
     .from('donations')
-    .select('*')
+    .select('donation_amount')
     .eq('campaign_id', campaignId)
     .eq('status', 'completed')
 
@@ -152,7 +152,7 @@ export async function getCampaignStats(campaignId: string) {
 
   return {
     totalDonations: data?.length || 0,
-    totalAmount: data?.reduce((sum, d) => sum + d.donation_amount, 0) || 0,
-    drawParticipants: data?.length || 0
+    totalAmount: data?.reduce((sum, d) => sum + d.donation_portion, 0) || 0,
+    drawParticipants: data?.filter(d => d.enters_draw).length || 0
   }
 }
