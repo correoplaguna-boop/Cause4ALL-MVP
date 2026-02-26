@@ -47,10 +47,13 @@ export interface Donation {
   id: string
   campaign_id: string
   amount: number
-  donation_amount: number
-  customer_email: string | null
-  stripe_payment_id?: string
+  donation_portion: number
+  product_portion: number
+  email: string | null
+  name?: string
+  stripe_payment_id: string
   stripe_session_id?: string
+  enters_draw: boolean
   status: 'pending' | 'completed' | 'failed' | 'refunded'
   created_at: string
 }
