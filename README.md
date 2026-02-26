@@ -367,10 +367,11 @@ Supabase tiene RLS activado. Las políticas actuales permiten:
 
 ## 📞 Soporte
 
-¿Problemas? Abre un issue o contacta en soporte@change4all.es
+¿Problemas? Abre un issue o contacta en hola@change4all.es
 
 ---
 
 ## 📄 Licencia
 
 MIT - Usa este código como quieras.
+
