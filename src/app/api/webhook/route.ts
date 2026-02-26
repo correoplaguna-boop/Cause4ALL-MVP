@@ -54,9 +54,12 @@ export async function POST(request: NextRequest) {
       await recordDonation({
         campaign_id: campaignId,
         amount: totalAmount,
-        donation_amount: donationAmount,
-        customer_email: session.customer_details?.email || null,
+        donation_portion: donationAmount,
+        product_portion: totalAmount - donationAmount,
+        email: session.customer_details?.email || null,
+        stripe_payment_id: session.payment_intent as string,
         stripe_session_id: session.id,
+        enters_draw: true,
         status: 'completed',
       })
       
