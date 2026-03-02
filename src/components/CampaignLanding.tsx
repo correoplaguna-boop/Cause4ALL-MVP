@@ -108,11 +108,12 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
       <header className="px-5 py-5 max-w-lg mx-auto">
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-6 animate-slide-up">
-          <div className="w-10 h-10 bg-gradient-to-br from-primary-400 to-primary-500 rounded-xl flex items-center justify-center text-xl shadow-lg shadow-primary-500/30">
-            💝
-          </div>
-          <span className="font-display font-bold text-xl text-gray-800">Cause4All</span>
-        </div>
+  <img 
+    src="/logo.svg" 
+    alt="Cause4All" 
+    className="h-12 w-auto"
+  />
+</div>
 
         {/* Main image */}
         <div className="rounded-3xl overflow-hidden mb-6 shadow-2xl shadow-black/10 relative animate-slide-up animate-delay-100">
