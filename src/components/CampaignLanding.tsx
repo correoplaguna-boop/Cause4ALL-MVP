@@ -298,7 +298,7 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
     <img 
       src={campaign.prize_image_url} 
       alt={campaign.prize_title}
-      className="w-16 h-16 rounded-xl object-cover shrink-0"
+      className="w-32 h-32 rounded-xl object-cover shrink-0"
     />
   ) : (
     <div className="w-16 h-16 bg-gradient-to-br from-blue-300 to-blue-400 rounded-xl flex items-center justify-center text-3xl shrink-0">
