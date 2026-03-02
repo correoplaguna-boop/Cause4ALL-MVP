@@ -17,8 +17,8 @@ const PRICE_OPTIONS = [
   { price: 7.5, label: 'Solidario, Compra 1', sublabel: '2,50€ + 5€ donación', donation: 5, product: 2.5, featured: true },
   { price: 10, label: 'Generoso, prodcuto y 7,5 donación', sublabel: '2,50€ + 7,50€ donación', donation: 7.5, product: 2.5 },
   { price: 15, label: 'Compra 2', sublabel: '5,00€ + 10 € donación', donation: 10, product: 5 },
-  { price: 20, label: 'Super Generoso, producuto y 17,5 donación', sublabel: '2,50€ + 17,50€ donación', donation: 17.5, product: 2.5 },
-  { price: 22,5, label: 'Compra 3', sublabel: '7,50€ + 15 € donación', donation: 15, product:7,5  },
+  { price: 20, label: 'Super Generoso, producuto y 17,5€ donación', sublabel: '2,50€ + 17,50€ donación', donation: 17.5, product: 2.5 },
+  { price: 22,5, label: 'Compra 3', sublabel: '7,50€ + 15 € donación', donation: 15, product:7.5  },
 ]
 
 export default function CampaignLanding({ campaign, stats }: CampaignLandingProps) {
