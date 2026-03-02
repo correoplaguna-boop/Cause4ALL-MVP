@@ -14,8 +14,26 @@ async function getActiveCampaigns() {
   return campaigns || []
 }
 
+async function getGlobalStats() {
+  const { data, error } = await supabase
+    .from('donations')
+    .select('donation_portion')
+    .eq('status', 'completed')
+
+  if (error) {
+    console.error('Error fetching global stats:', error)
+    return { totalRaised: 0, totalParticipants: 0 }
+  }
+
+  return {
+    totalRaised: data?.reduce((sum, d) => sum + d.donation_portion, 0) || 0,
+    totalParticipants: data?.length || 0
+  }
+}
+
 export default async function HomePage() {
   const campaigns = await getActiveCampaigns()
+  const globalStats = await getGlobalStats()
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
@@ -49,7 +67,7 @@ export default async function HomePage() {
           >
             Ver campañas activas
           </Link>
-                  </div>
+        </div>
       </section>
 
       {/* Features */}
@@ -86,6 +104,43 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Global Stats */}
+      <section className="py-12 bg-gradient-to-r from-blue-50 to-green-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            {/* Total Recaudado */}
+            <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-blue-100 hover:shadow-xl transition-shadow">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-3xl shadow-lg">
+                  💰
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Total Recaudado</p>
+                  <p className="text-4xl font-display font-bold text-gray-900 mt-1">
+                    {globalStats.totalRaised.toLocaleString('es-ES')} €
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Total Participantes */}
+            <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-green-100 hover:shadow-xl transition-shadow">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-3xl shadow-lg">
+                  👥
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Participantes</p>
+                  <p className="text-4xl font-display font-bold text-gray-900 mt-1">
+                    {globalStats.totalParticipants}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Active Campaigns */}
       <section id="campanas" className="max-w-7xl mx-auto px-6 py-16">
         <h2 className="font-display text-4xl font-bold text-gray-900 mb-4">
@@ -112,10 +167,10 @@ export default async function HomePage() {
             {campaigns.map((campaign) => {
               const progress = (campaign.current_amount / campaign.goal_amount) * 100
               const causeIcons: Record<string, string> = {
-  escolar: '🎓',
-  deportiva: '⚽',
-  social: '💚',
-}
+                escolar: '🎓',
+                deportiva: '⚽',
+                social: '💚',
+              }
 
               return (
                 <Link
