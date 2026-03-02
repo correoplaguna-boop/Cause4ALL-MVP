@@ -174,4 +174,3 @@ export async function getCampaignStats(campaignId: string) {
     totalParticipants: data?.length || 0
   }
 }
-}
