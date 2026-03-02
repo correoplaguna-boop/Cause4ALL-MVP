@@ -293,19 +293,27 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
             <h2 className="font-display text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               🎉 Sorteo solidario
             </h2>
-            <div className="bg-white rounded-2xl p-4 flex items-center gap-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-300 to-blue-400 rounded-xl flex items-center justify-center text-3xl shrink-0">
-                🎁
-              </div>
-              <div>
-                <p className="font-bold text-gray-900">{campaign.prize_title}</p>
-                {campaign.draw_date && (
-                  <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                    📅 Fecha: {new Date(campaign.draw_date).toLocaleDateString('es-ES')}
-                  </p>
-                )}
-              </div>
-            </div>
+           <div className="bg-white rounded-2xl p-4 flex items-center gap-4">
+  {campaign.prize_image_url ? (
+    <img 
+      src={campaign.prize_image_url} 
+      alt={campaign.prize_title}
+      className="w-16 h-16 rounded-xl object-cover shrink-0"
+    />
+  ) : (
+    <div className="w-16 h-16 bg-gradient-to-br from-blue-300 to-blue-400 rounded-xl flex items-center justify-center text-3xl shrink-0">
+      🎁
+    </div>
+  )}
+  <div>
+    <p className="font-bold text-gray-900">{campaign.prize_title}</p>
+    {campaign.draw_date && (
+      <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+        📅 Fecha: {new Date(campaign.draw_date).toLocaleDateString('es-ES')}
+      </p>
+    )}
+  </div>
+</div>
             <p className="text-xs text-green-700 text-center mt-3">
               Se anunciará el ganador por email
             </p>
