@@ -13,9 +13,10 @@ interface CampaignLandingProps {
 }
 
 const PRICE_OPTIONS = [
-  { price: 5, label: 'Donación', sublabel: '5€ a la causa', donation: 5, product: 0 },
+  { price: 5, label: 'Donación sin producto', sublabel: '5€ a la causa', donation: 5, product: 0 },
   { price: 7.5, label: 'Solidario', sublabel: '2,50€ + 5€ donación', donation: 5, product: 2.5, featured: true },
   { price: 10, label: 'Generoso', sublabel: '2,50€ + 7,50€ donación', donation: 7.5, product: 2.5 },
+  { price: 20, label: 'Super Generoso', sublabel: '2,50€ + 17,50€ donación', donation: 17.5, product: 2.5 },
 ]
 
 export default function CampaignLanding({ campaign, stats }: CampaignLandingProps) {
