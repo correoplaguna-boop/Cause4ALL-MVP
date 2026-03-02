@@ -158,4 +158,20 @@ export async function getCampaignStats(campaignId: string) {
     totalAmount: data?.reduce((sum, d) => sum + d.donation_portion, 0) || 0,
     drawParticipants: data?.filter(d => d.enters_draw).length || 0
   }
+  export async function getGlobalStats() {
+  const { data, error } = await supabase
+    .from('donations')
+    .select('donation_portion')
+    .eq('status', 'completed')
+
+  if (error) {
+    console.error('Error fetching global stats:', error)
+    return { totalRaised: 0, totalParticipants: 0 }
+  }
+
+  return {
+    totalRaised: data?.reduce((sum, d) => sum + d.donation_portion, 0) || 0,
+    totalParticipants: data?.length || 0
+  }
+}
 }
