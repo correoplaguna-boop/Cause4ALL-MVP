@@ -134,8 +134,8 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
     } finally {
       setIsLoading(false)
     }
-  }
-}
+  }  //
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-warm-50 via-warm-100 to-warm-200 relative overflow-hidden">
       {/* Background decorations */}
