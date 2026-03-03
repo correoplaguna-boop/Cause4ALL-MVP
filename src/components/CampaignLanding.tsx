@@ -13,7 +13,7 @@ interface CampaignLandingProps {
 }
 
 const PRICE_OPTIONS = [
-  { price: 5, label: 'Donación directa', sublabel: '❤️ 5€ donación', sublabel: '🎟 1 participación', donation: 5, product: 0 },
+  { price: 5, label: 'Donación directa', sublabel: '❤️ 5€ donación 🎟 1 participación', donation: 5, product: 0 },
   { price: 7.5, label: 'Recomendado', sublabel: 'Valor completo', donation: 5, product: 2.5, featured: true },
   { price: 10, label: 'Generoso', sublabel: 'Apoyo extra', donation: 7.5, product: 2.5 },
   { price: 15, label: 'Muy generoso', sublabel: 'Gran ayuda', donation: 10, product: 5 },
