@@ -17,7 +17,7 @@ const PRICE_OPTIONS = [
     price: 5, 
     label: 'Donación directa', 
     icon: '🟢',
-    details: '❤️ 5€ donación  - 🎟 1 participación',
+    details: '❤️ 5€ donación   🎟 1 participación',
     donation: 5, 
     product: 0,
     tickets: 1
@@ -26,7 +26,7 @@ const PRICE_OPTIONS = [
     price: 7.5, 
     label: 'Opción estándar', 
     icon: '⭐',
-    details: ' 1 producto 2,5€     -     ❤️ 5€ donación    -      🎟 1 participación',
+    details: ' 📦1 producto 2,5€         ❤️ 5€ donación          🎟 1 participación',
     donation: 5, 
     product: 2.5,
     tickets: 1,
@@ -36,7 +36,7 @@ const PRICE_OPTIONS = [
     price: 10, 
     label: 'Generoso', 
     icon: '💚',
-    details: ' 1 producto      -        ❤️ 7,5€ donación     -      🎟 1 participación',
+    details: ' 📦1 producto              ❤️ 7,5€ donación           🎟 1 participación',
     donation: 7.5, 
     product: 2.5,
     tickets: 1
@@ -45,7 +45,7 @@ const PRICE_OPTIONS = [
     price: 15, 
     label: 'Doble apoyo', 
     icon: '🎁',
-    details: ' 2 productos     -       ❤️ 10€ donación      -       🎟 2 participaciones',
+    details: ' 📦📦2 productos            ❤️ 10€ donación            🎟🎟 2 participaciones',
     donation: 10, 
     product: 5,
     tickets: 2
@@ -54,7 +54,7 @@ const PRICE_OPTIONS = [
     price: 20, 
     label: 'Muy generoso', 
     icon: '🌟',
-    details: ' 1 producto       -       ❤️ 17,5€ donación     -      🎟 2 participaciones',
+    details: ' 📦1 producto             ❤️ 17,5€ donación           🎟🎟🎟 3 participaciones',
     donation: 17.5, 
     product: 2.5,
     tickets: 2
@@ -63,7 +63,7 @@ const PRICE_OPTIONS = [
     price: 22.5, 
     label: 'Triple apoyo', 
     icon: '💎',
-    details: ' 3 productos   -        ❤️ 15€ donación      -      🎟 3 participaciones',
+    details: ' 📦📦📦3 productos          ❤️ 15€ donación           🎟🎟🎟 3 participaciones',
     donation: 15, 
     product: 7.5,
     tickets: 3
