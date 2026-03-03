@@ -28,6 +28,9 @@ export interface Campaign {
   image_url?: string
   goal_amount: number
   current_amount: number
+  goal_milestone_1?: number
+  goal_milestone_2?: number
+  goal_milestone_3?: number
   product_price: number
   donation_amount: number
   prize_title?: string
@@ -174,5 +177,55 @@ export async function getGlobalStats() {
   return {
     totalRaised: data?.reduce((sum, d) => sum + d.donation_portion, 0) || 0,
     totalParticipants: data?.length || 0
+  }
+}
+
+// Helper para calcular el objetivo y progreso actual según milestones
+export function getCurrentMilestone(campaign: Campaign) {
+  const current = campaign.current_amount
+  const m1 = campaign.goal_milestone_1 || 0
+  const m2 = campaign.goal_milestone_2 || 0
+  const m3 = campaign.goal_milestone_3 || campaign.goal_amount
+
+  // Si no hay milestones configurados, usar el sistema antiguo
+  if (!m1 && !m2) {
+    return {
+      phase: 1,
+      currentGoal: m3,
+      previousGoal: 0,
+      progress: (current / m3) * 100,
+      phaseLabel: 'Objetivo Final'
+    }
+  }
+
+  // Fase 1: Hasta milestone 1
+  if (current < m1) {
+    return {
+      phase: 1,
+      currentGoal: m1,
+      previousGoal: 0,
+      progress: (current / m1) * 100,
+      phaseLabel: 'Objetivo 1'
+    }
+  }
+
+  // Fase 2: Entre milestone 1 y 2
+  if (m2 && current < m2) {
+    return {
+      phase: 2,
+      currentGoal: m2,
+      previousGoal: m1,
+      progress: ((current - m1) / (m2 - m1)) * 100,
+      phaseLabel: 'Objetivo 2'
+    }
+  }
+
+  // Fase 3: Entre milestone 2 y 3 (final)
+  return {
+    phase: 3,
+    currentGoal: m3,
+    previousGoal: m2 || m1,
+    progress: ((current - (m2 || m1)) / (m3 - (m2 || m1))) * 100,
+    phaseLabel: 'Objetivo 3'
   }
 }
