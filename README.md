@@ -369,6 +369,7 @@ Supabase tiene RLS activado. Las políticas actuales permiten:
 
 ¿Problemas? Abre un issue o contacta en hola@change4all.es
 
+
 ---
 
 ## 📄 Licencia
