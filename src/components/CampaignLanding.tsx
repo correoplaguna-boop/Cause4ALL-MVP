@@ -227,7 +227,7 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           </h2>
           <div className="space-y-3">
             {[
-              { emoji: '🛒', text: 'Compra un producto solidario (desde 5€)' },
+              { emoji: '🛒', text: 'Compra un producto o dona (desde 5€)' },
               { emoji: '💝', text: 'Apoyas la causa y ayudas a las familias' },
               { emoji: '🎁', text: 'Participas en el sorteo del premio' },
             ].map((step, i) => (
