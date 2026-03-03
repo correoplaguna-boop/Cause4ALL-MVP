@@ -384,7 +384,6 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl">
             <p className="text-xs text-green-800 text-center font-medium">
               ✓ Pago 100% seguro con Stripe<br/>
-              ✓ Certificado de donación por email
             </p>
           </div>
         </section>
