@@ -15,7 +15,7 @@ export default function AdminPage() {
   const [showForm, setShowForm] = useState(false)
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null)
 
-  // Form state
+  // Form state - AHORA CON MILESTONES
   const [formData, setFormData] = useState({
     organization_id: '',
     organization_name: '',
@@ -25,6 +25,9 @@ export default function AdminPage() {
     description: '',
     cause_type: 'escolar' as 'escolar' | 'deportiva' | 'social',
     goal_amount: 3000,
+    goal_milestone_1: null as number | null,
+    goal_milestone_2: null as number | null,
+    goal_milestone_3: 3000,
     product_price: 7.5,
     donation_amount: 5,
     image_url: '',
@@ -37,7 +40,7 @@ export default function AdminPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-    if (password === 'Cause4All@98') { // Cambia esta contraseña por una más segura
+    if (password === 'Cause4All@98') {
       setIsAuthenticated(true)
       localStorage.setItem('admin_auth', 'true')
     } else {
@@ -46,7 +49,6 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
-    // Check if already authenticated
     const authStored = localStorage.getItem('admin_auth')
     if (authStored === 'true') {
       setIsAuthenticated(true)
@@ -93,11 +95,9 @@ export default function AdminPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // First, create or find organization
     let orgId = formData.organization_id
 
     if (!orgId && formData.organization_name) {
-      // Create new organization
       const { data: newOrg, error: orgError } = await supabase
         .from('organizations')
         .insert({
@@ -117,6 +117,7 @@ export default function AdminPage() {
       orgId = newOrg.id
     }
 
+    // Sincronizar goal_amount con goal_milestone_3
     const campaignData = {
       organization_id: orgId,
       title: formData.title,
@@ -124,7 +125,10 @@ export default function AdminPage() {
       slug: formData.slug,
       description: formData.description,
       cause_type: formData.cause_type,
-      goal_amount: formData.goal_amount,
+      goal_amount: formData.goal_milestone_3, // Sincronizado
+      goal_milestone_1: formData.goal_milestone_1,
+      goal_milestone_2: formData.goal_milestone_2,
+      goal_milestone_3: formData.goal_milestone_3,
       product_price: formData.product_price,
       donation_amount: formData.donation_amount,
       image_url: formData.image_url || null,
@@ -173,14 +177,17 @@ export default function AdminPage() {
       subtitle: '',
       slug: '',
       description: '',
-      cause_type: 'escolar' as 'escolar' | 'deportiva' | 'social',
+      cause_type: 'escolar',
       goal_amount: 3000,
+      goal_milestone_1: null,
+      goal_milestone_2: null,
+      goal_milestone_3: 3000,
       product_price: 7.5,
       donation_amount: 5,
       image_url: '',
       prize_title: '',
       prize_image_url: '',
-      prize_type: 'material' as 'material' | 'experiencia' | 'digital',
+      prize_type: 'material',
       draw_date: '',
       end_date: '',
     })
@@ -196,12 +203,15 @@ export default function AdminPage() {
       description: campaign.description,
       cause_type: campaign.cause_type,
       goal_amount: campaign.goal_amount,
+      goal_milestone_1: campaign.goal_milestone_1 || null,
+      goal_milestone_2: campaign.goal_milestone_2 || null,
+      goal_milestone_3: campaign.goal_milestone_3 || campaign.goal_amount,
       product_price: campaign.product_price,
       donation_amount: campaign.donation_amount,
       image_url: campaign.image_url || '',
       prize_title: campaign.prize_title || '',
       prize_image_url: campaign.prize_image_url || '',
-      prize_type: campaign.prize_type || 'material' as 'material' | 'experiencia' | 'digital',
+      prize_type: campaign.prize_type || 'material',
       draw_date: campaign.draw_date ? new Date(campaign.draw_date).toISOString().split('T')[0] : '',
       end_date: campaign.end_date ? new Date(campaign.end_date).toISOString().split('T')[0] : '',
     })
@@ -223,7 +233,6 @@ export default function AdminPage() {
     loadData()
   }
 
-  // Login screen
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -248,9 +257,6 @@ export default function AdminPage() {
               Acceder
             </button>
           </form>
-          <p className="text-xs text-gray-400 mt-4 text-center">
-            Contraseña predeterminada: cause4all2025
-          </p>
         </div>
       </div>
     )
@@ -266,7 +272,6 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -304,7 +309,6 @@ export default function AdminPage() {
       </header>
 
       <main className="max-w-6xl mx-auto px-6 py-8">
-        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           {[
             { label: 'Campañas activas', value: campaigns.filter(c => c.status === 'active').length, icon: '🚀' },
@@ -324,7 +328,6 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {/* Campaigns table */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100">
             <h2 className="font-display text-lg font-bold text-gray-900">Campañas</h2>
@@ -420,11 +423,10 @@ export default function AdminPage() {
         </div>
       </main>
 
-      {/* Campaign Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white rounded-t-3xl">
+        <div className="fixed inset-0 bg-black/50 flex items-start justify-center p-4 z-50 overflow-y-auto pt-8">
+          <div className="bg-white rounded-3xl max-w-2xl w-full mb-8">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white rounded-t-3xl z-10">
               <h2 className="font-display text-xl font-bold text-gray-900">
                 {editingCampaign ? 'Editar campaña' : 'Nueva campaña'}
               </h2>
@@ -441,7 +443,6 @@ export default function AdminPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
-              {/* Organization Name */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Nombre de la Organización *
@@ -459,7 +460,6 @@ export default function AdminPage() {
                 </p>
               </div>
 
-              {/* Title & Subtitle */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -488,7 +488,6 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Slug */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   URL (slug) *
@@ -505,7 +504,6 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Description */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Descripción * <span className="text-gray-400 font-normal">(máx. 400 caracteres)</span>
@@ -522,7 +520,6 @@ export default function AdminPage() {
                 <p className="text-xs text-gray-400 mt-1">{formData.description.length}/400</p>
               </div>
 
-              {/* Campaign Image */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   🖼️ Imagen de campaña
@@ -547,44 +544,97 @@ export default function AdminPage() {
                     />
                   </div>
                 )}
-                <p className="text-xs text-gray-500 mt-2">
-                  💡 <strong>Sugerencias:</strong> Usar <a href="https://imgur.com" target="_blank" rel="noopener" className="text-primary-500 hover:underline">Imgur</a>, 
-                  {' '}<a href="https://cloudinary.com" target="_blank" rel="noopener" className="text-primary-500 hover:underline">Cloudinary</a>, o 
-                  {' '}<a href="https://supabase.com/storage" target="_blank" rel="noopener" className="text-primary-500 hover:underline">Supabase Storage</a>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Tipo de causa
+                </label>
+                <select
+                  value={formData.cause_type}
+                  onChange={(e) => setFormData(prev => ({ ...prev, cause_type: e.target.value as any }))}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"
+                >
+                  <option value="escolar">🎓 Escolar</option>
+                  <option value="deportiva">⚽ Deportiva</option>
+                  <option value="social">💚 Social</option>
+                </select>
+              </div>
+
+              {/* OBJETIVOS PROGRESIVOS - LA PARTE IMPORTANTE */}
+              <div className="space-y-3 bg-gradient-to-br from-blue-50 to-purple-50 p-5 rounded-xl border-2 border-blue-100">
+                <label className="block text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                  <span className="text-xl">🎯</span> Objetivos progresivos (€)
+                </label>
+                <p className="text-xs text-gray-600 mb-3">
+                  Define hasta 3 objetivos. Se mostrarán uno a uno conforme se vayan alcanzando para motivar más donaciones.
                 </p>
+                
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-blue-600 mb-1">
+                      Objetivo 1 (Inicial)
+                    </label>
+                    <input
+                      type="number"
+                      min={100}
+                      step={50}
+                      value={formData.goal_milestone_1 || ''}
+                      onChange={(e) => setFormData({ ...formData, goal_milestone_1: e.target.value ? parseFloat(e.target.value) : null })}
+                      placeholder="3000"
+                      className="w-full px-3 py-2.5 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-semibold"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-green-600 mb-1">
+                      Objetivo 2 (Medio)
+                    </label>
+                    <input
+                      type="number"
+                      min={100}
+                      step={50}
+                      value={formData.goal_milestone_2 || ''}
+                      onChange={(e) => setFormData({ ...formData, goal_milestone_2: e.target.value ? parseFloat(e.target.value) : null })}
+                      placeholder="10000"
+                      className="w-full px-3 py-2.5 border-2 border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm font-semibold"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-purple-600 mb-1">
+                      Objetivo 3 (Final) *
+                    </label>
+                    <input
+                      type="number"
+                      min={100}
+                      step={50}
+                      required
+                      value={formData.goal_milestone_3}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value)
+                        setFormData({ 
+                          ...formData, 
+                          goal_milestone_3: value,
+                          goal_amount: value
+                        })
+                      }}
+                      placeholder="50000"
+                      className="w-full px-3 py-2.5 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm font-semibold"
+                    />
+                  </div>
+                </div>
+                
+                <div className="bg-white/60 p-3 rounded-lg">
+                  <p className="text-xs text-gray-700 font-medium">
+                    💡 Ejemplo: 3.000€ → 10.000€ → 50.000€
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Deja en blanco Objetivo 1 y 2 si solo quieres un objetivo final.
+                  </p>
+                </div>
               </div>
 
-              {/* Cause type & Goal */}
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Tipo de causa
-                  </label>
-                  <select
-                    value={formData.cause_type}
-                    onChange={(e) => setFormData(prev => ({ ...prev, cause_type: e.target.value as any }))}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"
-                  >
-                    <option value="escolar">🎓 Escolar</option>
-                    <option value="deportiva">⚽ Deportiva</option>
-                    <option value="social">💚 Social</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Meta de recaudación (€)
-                  </label>
-                  <input
-                    type="number"
-                    min={100}
-                    value={formData.goal_amount}
-                    onChange={(e) => setFormData(prev => ({ ...prev, goal_amount: parseInt(e.target.value) }))}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* Prize */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -611,7 +661,6 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Prize Image */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   🎁 Imagen del premio
@@ -638,8 +687,7 @@ export default function AdminPage() {
                 )}
               </div>
 
-              {/* Submit */}
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-4 border-t border-gray-100 sticky bottom-0 bg-white pb-2">
                 <button
                   type="button"
                   onClick={() => {
