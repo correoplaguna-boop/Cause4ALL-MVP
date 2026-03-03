@@ -60,6 +60,42 @@ export default async function HomePage() {
         <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-10">
           Ayudamos a colegios, AMPAs y asociaciones a financiar sus proyectos mediante la venta de productos con donación incluida y seguimiento en tiempo real de la recaudación
         </p>
+        
+        {/* Global Stats - AQUÍ JUSTO ANTES DEL BOTÓN */}
+        <div className="mb-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            {/* Total Recaudado */}
+            <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-blue-100 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-center gap-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-3xl shadow-lg">
+                  💰
+                </div>
+                <div className="text-left">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Total Recaudado</p>
+                  <p className="text-3xl font-display font-bold text-gray-900 mt-1">
+                    {globalStats.totalRaised.toLocaleString('es-ES')} €
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Total Participantes */}
+            <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-green-100 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-center gap-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-3xl shadow-lg">
+                  👥
+                </div>
+                <div className="text-left">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Participantes</p>
+                  <p className="text-3xl font-display font-bold text-gray-900 mt-1">
+                    {globalStats.totalParticipants}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <div className="flex gap-4 justify-center flex-wrap">
           <Link
             href="#campanas"
@@ -104,43 +140,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Global Stats */}
-      <section className="py-12 bg-gradient-to-r from-blue-50 to-green-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            {/* Total Recaudado */}
-            <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-blue-100 hover:shadow-xl transition-shadow">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-3xl shadow-lg">
-                  💰
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Total Recaudado</p>
-                  <p className="text-4xl font-display font-bold text-gray-900 mt-1">
-                    {globalStats.totalRaised.toLocaleString('es-ES')} €
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Total Participantes */}
-            <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-green-100 hover:shadow-xl transition-shadow">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-3xl shadow-lg">
-                  👥
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Participantes</p>
-                  <p className="text-4xl font-display font-bold text-gray-900 mt-1">
-                    {globalStats.totalParticipants}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Active Campaigns */}
       <section id="campanas" className="max-w-7xl mx-auto px-6 py-16">
         <h2 className="font-display text-4xl font-bold text-gray-900 mb-4">
@@ -178,7 +177,6 @@ export default async function HomePage() {
                   href={`/c/${campaign.slug}`}
                   className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
                 >
-                  {/* Badge */}
                   <div className="relative">
                     <div className="absolute top-4 left-4 z-10">
                       <span className="inline-flex items-center gap-2 bg-green-500 text-white px-3 py-1.5 rounded-full text-sm font-semibold shadow-lg">
@@ -187,7 +185,6 @@ export default async function HomePage() {
                       </span>
                     </div>
 
-                    {/* Image */}
                     <div className="w-full h-48 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center relative overflow-hidden">
                       {campaign.image_url ? (
                         <img
@@ -197,7 +194,6 @@ export default async function HomePage() {
                         />
                       ) : (
                         <>
-                          {/* Placeholder SVG */}
                           <svg
                             viewBox="0 0 400 220"
                             className="absolute bottom-0 w-full"
@@ -249,7 +245,6 @@ export default async function HomePage() {
                     </div>
                   </div>
 
-                  {/* Content */}
                   <div className="p-6">
                     <h3 className="font-display text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
                       {campaign.title}
@@ -258,7 +253,6 @@ export default async function HomePage() {
                       {campaign.subtitle}
                     </p>
 
-                    {/* Progress */}
                     <div className="mb-4">
                       <div className="flex justify-between text-sm mb-2">
                         <span className="font-semibold text-gray-900">
@@ -276,7 +270,6 @@ export default async function HomePage() {
                       </div>
                     </div>
 
-                    {/* Footer */}
                     <div className="flex items-center justify-between">
                       <span className="flex items-center gap-2 text-sm text-gray-600">
                         <span className="text-lg">
@@ -293,7 +286,6 @@ export default async function HomePage() {
         )}
       </section>
 
-      {/* CTA Section */}
       <section className="max-w-5xl mx-auto px-6 py-20">
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-3xl p-12 text-center text-white shadow-2xl">
           <h2 className="font-display text-4xl font-bold mb-4">
@@ -306,7 +298,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
