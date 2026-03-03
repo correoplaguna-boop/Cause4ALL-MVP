@@ -13,13 +13,63 @@ interface CampaignLandingProps {
 }
 
 const PRICE_OPTIONS = [
-  { price: 5, label: 'Donación directa', sublabel: '❤️ 5€ donación 🎟 1 participación', donation: 5, product: 0 },
-  { price: 7.5, label: 'Recomendado', sublabel: 'Valor completo', donation: 5, product: 2.5, featured: true },
-  { price: 10, label: 'Generoso', sublabel: 'Apoyo extra', donation: 7.5, product: 2.5 },
-  { price: 15, label: 'Muy generoso', sublabel: 'Gran ayuda', donation: 10, product: 5 },
-  { price: 20, label: 'Extra generoso', sublabel: 'Impacto grande', donation: 17.5, product: 2.5 },
-  { price: 22.5, label: 'Super generoso', sublabel: 'Impacto enorme', donation: 15, product: 7.5 },
+  { 
+    price: 5, 
+    label: 'Donación directa', 
+    icon: '🟢',
+    details: '❤️ 5€ donación • 🎟 1 participación',
+    donation: 5, 
+    product: 0,
+    tickets: 1
+  },
+  { 
+    price: 7.5, 
+    label: 'Opción estándar', 
+    icon: '⭐',
+    details: '🛍 1 producto (2,5€) • ❤️ 5€ donación • 🎟 1 participación',
+    donation: 5, 
+    product: 2.5,
+    tickets: 1,
+    featured: true 
+  },
+  { 
+    price: 10, 
+    label: 'Generoso', 
+    icon: '💚',
+    details: '🛍 1 producto • ❤️ 7,5€ donación • 🎟 1 participación',
+    donation: 7.5, 
+    product: 2.5,
+    tickets: 1
+  },
+  { 
+    price: 15, 
+    label: 'Doble apoyo', 
+    icon: '🎁',
+    details: '🛍 2 productos • ❤️ 10€ donación • 🎟 2 participaciones',
+    donation: 10, 
+    product: 5,
+    tickets: 2
+  },
+  { 
+    price: 20, 
+    label: 'Muy generoso', 
+    icon: '🌟',
+    details: '🛍 1 producto • ❤️ 17,5€ donación • 🎟 2 participaciones',
+    donation: 17.5, 
+    product: 2.5,
+    tickets: 2
+  },
+  { 
+    price: 22.5, 
+    label: 'Máximo apoyo', 
+    icon: '💎',
+    details: '🛍 3 productos • ❤️ 15€ donación • 🎟 3 participaciones',
+    donation: 15, 
+    product: 7.5,
+    tickets: 3
+  },
 ]
+
 
 export default function CampaignLanding({ campaign, stats }: CampaignLandingProps) {
   const [selectedOption, setSelectedOption] = useState(PRICE_OPTIONS[1])
@@ -317,20 +367,36 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           </div>
 
           <button
-            onClick={handleDonate}
-            disabled={isLoading}
-            className="w-full btn-primary text-lg py-4 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? '⏳ Procesando...' : `APORTAR ${selectedOption.price}€`}
-          </button>
-
-          <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl">
-            <p className="text-xs text-green-800 text-center font-medium">
-              ✓ Pago 100% seguro con Stripe<br/>
-              ✓ Certificado de donación por email
-            </p>
-          </div>
-        </section>
+  key={option.price}
+  onClick={() => setSelectedOption(option)}
+  className={`relative p-4 rounded-2xl border-2 transition-all duration-200 text-left ${
+    selectedOption.price === option.price
+      ? 'border-primary-500 bg-white shadow-xl shadow-primary-500/30 scale-105'
+      : 'border-gray-200 bg-white/70 hover:bg-white hover:border-primary-300'
+  }`}
+>
+  {option.featured && (
+    <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
+      RECOMENDADO
+    </div>
+  )}
+  
+  <div className="flex items-center gap-2 mb-2">
+    <span className="text-2xl">{option.icon}</span>
+    <div>
+      <div className="font-display text-2xl font-bold text-gray-900">
+        {option.price}€
+      </div>
+      <div className="text-xs font-bold text-gray-700">
+        {option.label}
+      </div>
+    </div>
+  </div>
+  
+  <div className="text-[10px] text-gray-600 leading-relaxed">
+    {option.details}
+  </div>
+</button>
 
         {/* Prize draw */}
         {campaign.prize_title && (
