@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Campaign, getCurrentMilestone } from '@/lib/supabase'
 
 interface CampaignLandingProps {
@@ -13,12 +13,12 @@ interface CampaignLandingProps {
 }
 
 const PRICE_OPTIONS = [
-  { price: 5, label: 'Donación sin producto', sublabel: '5€ a la causa', donation: 5, product: 0 },
-  { price: 7.5, label: ' Compra 1 unidad  🛒', sublabel: '2,50€ + 5€ donación', donation: 5, product: 2.5, featured: true },
-  { price: 10, label: 'Generoso  🛒 +  Donación', sublabel: '2,50€ + 7,50€ donación', donation: 7.5, product: 2.5 },
-  { price: 15, label: 'Compra 2 unidades  🛒🛒', sublabel: '5,00€ + 10 € donación', donation: 10, product: 5 },
-  { price: 20, label: 'Generoso+ 🛒 + Donación', sublabel: '2,50€ + 17,50€ donación', donation: 17.5, product: 2.5 },
-  { price: 22.5, label: 'Compra 3 unidades  🛒🛒🛒', sublabel: '7,50€ + 15 € donación', donation: 15, product:7.5  },
+  { price: 5, label: 'Básico', sublabel: 'Solo donación', donation: 5, product: 0 },
+  { price: 7.5, label: 'Recomendado', sublabel: 'Valor completo', donation: 5, product: 2.5, featured: true },
+  { price: 10, label: 'Generoso', sublabel: 'Apoyo extra', donation: 7.5, product: 2.5 },
+  { price: 15, label: 'Muy generoso', sublabel: 'Gran ayuda', donation: 10, product: 5 },
+  { price: 20, label: 'Extra generoso', sublabel: 'Impacto grande', donation: 17.5, product: 2.5 },
+  { price: 22.5, label: 'Super generoso', sublabel: 'Impacto enorme', donation: 15, product: 7.5 },
 ]
 
 export default function CampaignLanding({ campaign, stats }: CampaignLandingProps) {
@@ -26,9 +26,10 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
   const [isLoading, setIsLoading] = useState(false)
   const [animatedAmount, setAnimatedAmount] = useState(0)
   const [showConfetti, setShowConfetti] = useState(false)
+  const selectionRef = useRef<HTMLElement>(null)
 
   const milestone = getCurrentMilestone(campaign)
-const progress = milestone.progress
+  const progress = milestone.progress
 
   // Animate counter on load
   useEffect(() => {
@@ -49,6 +50,10 @@ const progress = milestone.progress
 
     return () => clearInterval(timer)
   }, [campaign.current_amount])
+
+  const scrollToSelection = () => {
+    selectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
 
   const handleDonate = async () => {
     setIsLoading(true)
@@ -73,7 +78,6 @@ const progress = milestone.progress
         return
       }
 
-      // Redirect to Stripe Checkout
       window.location.href = url
     } catch (error) {
       alert('Error al conectar con el servidor.')
@@ -112,12 +116,12 @@ const progress = milestone.progress
       <header className="px-5 py-5 max-w-lg mx-auto">
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-6 animate-slide-up">
-  <img 
-    src="/logo.svg" 
-    alt="Cause4All" 
-    className="h-12 w-auto"
-  />
-</div>
+          <img 
+            src="/logo.svg" 
+            alt="Cause4All" 
+            className="h-12 w-auto"
+          />
+        </div>
 
         {/* Main image */}
         <div className="rounded-3xl overflow-hidden mb-6 shadow-2xl shadow-black/10 relative animate-slide-up animate-delay-100">
@@ -130,7 +134,6 @@ const progress = milestone.progress
               />
             ) : (
               <>
-                {/* Mountain illustration placeholder */}
                 <svg viewBox="0 0 400 220" className="absolute bottom-0 w-full">
                   <defs>
                     <linearGradient id="mountain1" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -147,12 +150,10 @@ const progress = milestone.progress
                   <polygon points="200,60 180,90 220,90" fill="white" />
                   <polygon points="250,220 350,100 450,220" fill="url(#mountain1)" opacity="0.5" />
                 </svg>
-                {/* Sun */}
                 <div className="absolute top-8 right-10 w-12 h-12 bg-gradient-radial from-yellow-200 to-yellow-400 rounded-full shadow-lg shadow-yellow-400/50 animate-float" />
               </>
             )}
           </div>
-          {/* Badge */}
           <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-semibold text-green-600 flex items-center gap-1.5">
             <span className="w-2 h-2 bg-green-500 rounded-full" />
             Campaña activa
@@ -172,79 +173,74 @@ const progress = milestone.progress
         </div>
 
         {/* Progress card */}
-<div className="card mb-4 animate-slide-up animate-delay-300">
-  {/* Fase actual */}
-  <div className="flex justify-between items-center mb-2">
-    <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-      {milestone.phaseLabel}
-    </span>
-    {milestone.phase < 3 && (
-      <span className="text-xs text-gray-400">
-        Siguiente: {milestone.currentGoal.toLocaleString('es-ES')}€
-      </span>
-    )}
-  </div>
-
-  <div className="flex justify-between items-end mb-3">
-    <div>
-      <span className="font-display text-3xl font-bold text-gray-900">
-        {animatedAmount.toLocaleString('es-ES')} €
-      </span>
-      <span className="text-sm text-gray-400 ml-2">recaudados</span>
-    </div>
-    <span className="text-sm text-gray-500 font-medium">
-      Meta: {milestone.currentGoal.toLocaleString('es-ES')} €
-    </span>
-  </div>
-
-  {/* Progress bar */}
-  <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-2 relative">
-    <div 
-      className="h-full bg-gradient-to-r from-primary-400 to-primary-500 rounded-full progress-shine transition-all duration-1000"
-      style={{ width: `${Math.min(progress, 100)}%` }}
-    />
-  </div>
-
-  <div className="flex justify-between text-xs text-gray-400">
-    <span>👥 {stats.totalDonations} apoyos</span>
-    <span>{Math.round(progress)}% de este objetivo</span>
-  </div>
-
-  {/* Indicador de milestones alcanzados */}
-  {(milestone.phase === 2 || milestone.phase === 3) && (
-    <div className="mt-3 pt-3 border-t border-gray-100">
-      <div className="flex gap-2">
-        {milestone.phase >= 1 && campaign.goal_milestone_1 && (
-          <div className="flex items-center gap-1 text-xs text-green-600">
-            <span className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center text-white text-[10px]">✓</span>
-            {campaign.goal_milestone_1.toLocaleString('es-ES')}€
+        <div className="card mb-4 animate-slide-up animate-delay-300">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+              {milestone.phaseLabel}
+            </span>
+            {milestone.phase < 3 && (
+              <span className="text-xs text-gray-400">
+                Siguiente: {milestone.currentGoal.toLocaleString('es-ES')}€
+              </span>
+            )}
           </div>
-        )}
-        {milestone.phase >= 2 && campaign.goal_milestone_2 && (
-          <div className="flex items-center gap-1 text-xs text-green-600">
-            <span className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center text-white text-[10px]">✓</span>
-            {campaign.goal_milestone_2.toLocaleString('es-ES')}€
-          </div>
-        )}
-        {milestone.phase === 3 && (
-          <div className="flex items-center gap-1 text-xs text-blue-600">
-            <span className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center text-white text-[10px]">→</span>
-            {milestone.currentGoal.toLocaleString('es-ES')}€ (Final)
-          </div>
-        )}
-      </div>
-    </div>
-  )}
-</div>
 
+          <div className="flex justify-between items-end mb-3">
+            <div>
+              <span className="font-display text-3xl font-bold text-gray-900">
+                {animatedAmount.toLocaleString('es-ES')} €
+              </span>
+              <span className="text-sm text-gray-400 ml-2">recaudados</span>
+            </div>
+            <span className="text-sm text-gray-500 font-medium">
+              Meta: {milestone.currentGoal.toLocaleString('es-ES')} €
+            </span>
+          </div>
 
-        {/* Main CTA */}
+          <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-2 relative">
+            <div 
+              className="h-full bg-gradient-to-r from-primary-400 to-primary-500 rounded-full progress-shine transition-all duration-1000"
+              style={{ width: `${Math.min(progress, 100)}%` }}
+            />
+          </div>
+
+          <div className="flex justify-between text-xs text-gray-400">
+            <span>👥 {stats.totalDonations} apoyos</span>
+            <span>{Math.round(progress)}% de este objetivo</span>
+          </div>
+
+          {(milestone.phase === 2 || milestone.phase === 3) && (
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <div className="flex gap-2">
+                {milestone.phase >= 1 && campaign.goal_milestone_1 && (
+                  <div className="flex items-center gap-1 text-xs text-green-600">
+                    <span className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center text-white text-[10px]">✓</span>
+                    {campaign.goal_milestone_1.toLocaleString('es-ES')}€
+                  </div>
+                )}
+                {milestone.phase >= 2 && campaign.goal_milestone_2 && (
+                  <div className="flex items-center gap-1 text-xs text-green-600">
+                    <span className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center text-white text-[10px]">✓</span>
+                    {campaign.goal_milestone_2.toLocaleString('es-ES')}€
+                  </div>
+                )}
+                {milestone.phase === 3 && (
+                  <div className="flex items-center gap-1 text-xs text-blue-600">
+                    <span className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center text-white text-[10px]">→</span>
+                    {milestone.currentGoal.toLocaleString('es-ES')}€ (Final)
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* CTA que hace scroll - NO decide por el usuario */}
         <button
-          onClick={handleDonate}
-          disabled={isLoading}
-          className="w-full btn-primary text-lg py-4 animate-pulse-glow animate-slide-up animate-delay-400 disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={scrollToSelection}
+          className="w-full btn-primary text-lg py-4 animate-pulse-glow animate-slide-up animate-delay-400"
         >
-          {isLoading ? '⏳ Procesando...' : '👉 APOYA LA CAUSA'}
+          👇 Elige tu aportación
         </button>
       </header>
 
@@ -261,58 +257,60 @@ const progress = milestone.progress
           </p>
         </section>
 
-        {/* How it works */}
-        <section className="card">
-          <h2 className="font-display text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
-            <span className="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center text-base">✨</span>
+        {/* How it works - SIMPLIFICADO */}
+        <section className="card bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-100">
+          <h2 className="font-display text-xl font-bold text-gray-900 mb-4 text-center">
             Cómo funciona
           </h2>
           <div className="space-y-3">
-            {[
-              { emoji: '🛒', text: 'Compra un producto o dona (desde 5€)' },
-              { emoji: '💝', text: 'Apoyas la causa y ayudas a las familias' },
-              { emoji: '🎁', text: 'Participas en el sorteo del premio' },
-            ].map((step, i) => (
-              <div key={i} className={`flex items-center gap-4 p-4 rounded-xl ${i % 2 === 0 ? 'bg-gray-50' : ''}`}>
-                <div className="w-11 h-11 bg-gradient-to-br from-primary-400 to-primary-500 rounded-xl flex items-center justify-center text-xl shrink-0">
-                  {step.emoji}
-                </div>
-                <p className="text-gray-800 font-medium">{step.text}</p>
-              </div>
-            ))}
+            <div className="flex items-center gap-3 bg-white/80 p-4 rounded-xl">
+              <span className="text-3xl">🔵</span>
+              <p className="text-gray-800 font-semibold">Aportas desde 5€</p>
+            </div>
+            <div className="flex items-center gap-3 bg-white/80 p-4 rounded-xl">
+              <span className="text-3xl">🎁</span>
+              <p className="text-gray-800 font-semibold">Participas en el sorteo</p>
+            </div>
+            <div className="flex items-center gap-3 bg-white/80 p-4 rounded-xl">
+              <span className="text-3xl">❤️</span>
+              <p className="text-gray-800 font-semibold">Ayudas a {campaign.organization?.name || 'la causa'}</p>
+            </div>
           </div>
         </section>
 
-        {/* Product selection */}
-        <section className="card-warm">
-          <h2 className="font-display text-xl font-bold text-gray-900 mb-2">
-            🎗️ Producto solidario
+        {/* Product selection - MEJORADO */}
+        <section ref={selectionRef} className="card-warm">
+          <h2 className="font-display text-2xl font-bold text-gray-900 mb-2 text-center">
+            💝 Elige tu aportación
           </h2>
-          <p className="text-sm text-amber-700 mb-5">
-            Elige tu aportación y participa en el sorteo
+          <p className="text-sm text-amber-800 text-center mb-6 font-medium">
+            Tu aportación va íntegra a la causa + participas en el sorteo
           </p>
 
-          <div className="grid grid-cols-3 gap-3 mb-4">
+          <div className="grid grid-cols-2 gap-3 mb-5">
             {PRICE_OPTIONS.map((option) => (
               <button
                 key={option.price}
                 onClick={() => setSelectedOption(option)}
-                className={`relative p-4 rounded-2xl border-2 transition-all duration-200 ${
+                className={`relative p-5 rounded-2xl border-2 transition-all duration-200 ${
                   selectedOption.price === option.price
-                    ? 'border-primary-500 bg-white shadow-lg shadow-primary-500/20'
-                    : 'border-transparent bg-white/70 hover:bg-white'
+                    ? 'border-primary-500 bg-white shadow-xl shadow-primary-500/30 scale-105'
+                    : 'border-gray-200 bg-white/70 hover:bg-white hover:border-primary-300'
                 }`}
               >
                 {option.featured && (
-                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                    POPULAR
+                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
+                    ⭐ MÁS ELEGIDO
                   </div>
                 )}
-                <div className="font-display text-2xl font-bold text-gray-900">
+                <div className="font-display text-3xl font-bold text-gray-900 mb-1">
                   {option.price}€
                 </div>
-                <div className="text-xs font-semibold text-gray-500 mt-1">
+                <div className="text-xs font-bold text-gray-700 mb-1">
                   {option.label}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {option.sublabel}
                 </div>
               </button>
             ))}
@@ -321,14 +319,17 @@ const progress = milestone.progress
           <button
             onClick={handleDonate}
             disabled={isLoading}
-            className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full btn-primary text-lg py-4 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? '⏳ Procesando...' : `APOYAR CON ${selectedOption.price}€`}
+            {isLoading ? '⏳ Procesando...' : `APORTAR ${selectedOption.price}€`}
           </button>
 
-          <p className="text-xs text-amber-700 text-center mt-3">
-            Valor simbólico del producto; tu apoyo se destina íntegramente a la causa.
-          </p>
+          <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl">
+            <p className="text-xs text-green-800 text-center font-medium">
+              ✓ Pago 100% seguro con Stripe<br/>
+              ✓ Certificado de donación por email
+            </p>
+          </div>
         </section>
 
         {/* Prize draw */}
@@ -338,28 +339,28 @@ const progress = milestone.progress
             <h2 className="font-display text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               🎉 Sorteo solidario
             </h2>
-           <div className="bg-white rounded-2xl p-4 flex items-center gap-4">
-  {campaign.prize_image_url ? (
-    <img 
-      src={campaign.prize_image_url} 
-      alt={campaign.prize_title}
-      className="w-32 h-32 rounded-xl object-cover shrink-0"
-    />
-  ) : (
-    <div className="w-16 h-16 bg-gradient-to-br from-blue-300 to-blue-400 rounded-xl flex items-center justify-center text-3xl shrink-0">
-      🎁
-    </div>
-  )}
-  <div>
-    <p className="font-bold text-gray-900">{campaign.prize_title}</p>
-    {campaign.draw_date && (
-      <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-        📅 Fecha: {new Date(campaign.draw_date).toLocaleDateString('es-ES')}
-      </p>
-    )}
-  </div>
-</div>
-            <p className="text-xs text-green-700 text-center mt-3">
+            <div className="bg-white rounded-2xl p-4 flex items-center gap-4">
+              {campaign.prize_image_url ? (
+                <img 
+                  src={campaign.prize_image_url} 
+                  alt={campaign.prize_title}
+                  className="w-24 h-24 rounded-xl object-cover shrink-0"
+                />
+              ) : (
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-300 to-blue-400 rounded-xl flex items-center justify-center text-3xl shrink-0">
+                  🎁
+                </div>
+              )}
+              <div>
+                <p className="font-bold text-gray-900">{campaign.prize_title}</p>
+                {campaign.draw_date && (
+                  <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                    📅 Sorteo: {new Date(campaign.draw_date).toLocaleDateString('es-ES')}
+                  </p>
+                )}
+              </div>
+            </div>
+            <p className="text-xs text-green-700 text-center mt-3 font-medium">
               Se anunciará el ganador por email
             </p>
           </section>
@@ -398,14 +399,16 @@ const progress = milestone.progress
           <p className="text-xs text-gray-400 mb-5">
             *La participación en el sorteo queda vinculada al email facilitado en la compra.*
           </p>
-          <div className="flex items-center justify-center gap-2 opacity-60">
-            <div className="w-6 h-6 bg-gradient-to-br from-primary-400 to-primary-500 rounded-md flex items-center justify-center text-xs">
-              💝
-            </div>
-            <span className="font-display font-semibold text-xs text-gray-500">Cause4All</span>
+          <div className="flex items-center justify-center opacity-60">
+            <img 
+              src="/logo.svg" 
+              alt="Cause4All" 
+              className="h-6 w-auto"
+            />
           </div>
         </footer>
       </main>
     </div>
   )
 }
+
