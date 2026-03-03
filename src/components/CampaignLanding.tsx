@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Campaign } from '@/lib/supabase'
+import { Campaign, getCurrentMilestone } from '@/lib/supabase'
 
 interface CampaignLandingProps {
   campaign: Campaign
@@ -27,7 +27,8 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
   const [animatedAmount, setAnimatedAmount] = useState(0)
   const [showConfetti, setShowConfetti] = useState(false)
 
-  const progress = (campaign.current_amount / campaign.goal_amount) * 100
+  const milestone = getCurrentMilestone(campaign)
+const progress = milestone.progress
 
   // Animate counter on load
   useEffect(() => {
@@ -171,30 +172,71 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
         </div>
 
         {/* Progress card */}
-        <div className="card mb-4 animate-slide-up animate-delay-300">
-          <div className="flex justify-between items-end mb-3">
-            <div>
-              <span className="font-display text-3xl font-bold text-gray-900">
-                {animatedAmount.toLocaleString('es-ES')} €
-              </span>
-              <span className="text-sm text-gray-400 ml-2">recaudados</span>
-            </div>
-            <span className="text-sm text-gray-500 font-medium">
-              Meta: {campaign.goal_amount.toLocaleString('es-ES')} €
-            </span>
+<div className="card mb-4 animate-slide-up animate-delay-300">
+  {/* Fase actual */}
+  <div className="flex justify-between items-center mb-2">
+    <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+      {milestone.phaseLabel}
+    </span>
+    {milestone.phase < 3 && (
+      <span className="text-xs text-gray-400">
+        Siguiente: {milestone.currentGoal.toLocaleString('es-ES')}€
+      </span>
+    )}
+  </div>
+
+  <div className="flex justify-between items-end mb-3">
+    <div>
+      <span className="font-display text-3xl font-bold text-gray-900">
+        {animatedAmount.toLocaleString('es-ES')} €
+      </span>
+      <span className="text-sm text-gray-400 ml-2">recaudados</span>
+    </div>
+    <span className="text-sm text-gray-500 font-medium">
+      Meta: {milestone.currentGoal.toLocaleString('es-ES')} €
+    </span>
+  </div>
+
+  {/* Progress bar */}
+  <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-2 relative">
+    <div 
+      className="h-full bg-gradient-to-r from-primary-400 to-primary-500 rounded-full progress-shine transition-all duration-1000"
+      style={{ width: `${Math.min(progress, 100)}%` }}
+    />
+  </div>
+
+  <div className="flex justify-between text-xs text-gray-400">
+    <span>👥 {stats.totalDonations} apoyos</span>
+    <span>{Math.round(progress)}% de este objetivo</span>
+  </div>
+
+  {/* Indicador de milestones alcanzados */}
+  {(milestone.phase === 2 || milestone.phase === 3) && (
+    <div className="mt-3 pt-3 border-t border-gray-100">
+      <div className="flex gap-2">
+        {milestone.phase >= 1 && campaign.goal_milestone_1 && (
+          <div className="flex items-center gap-1 text-xs text-green-600">
+            <span className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center text-white text-[10px]">✓</span>
+            {campaign.goal_milestone_1.toLocaleString('es-ES')}€
           </div>
-          {/* Progress bar */}
-          <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-2">
-            <div 
-              className="h-full bg-gradient-to-r from-primary-400 to-primary-500 rounded-full progress-shine transition-all duration-1000"
-              style={{ width: `${Math.min(progress, 100)}%` }}
-            />
+        )}
+        {milestone.phase >= 2 && campaign.goal_milestone_2 && (
+          <div className="flex items-center gap-1 text-xs text-green-600">
+            <span className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center text-white text-[10px]">✓</span>
+            {campaign.goal_milestone_2.toLocaleString('es-ES')}€
           </div>
-          <div className="flex justify-between text-xs text-gray-400">
-            <span>👥 {stats.totalDonations} apoyos</span>
-            <span>{Math.round(progress)}% conseguido</span>
+        )}
+        {milestone.phase === 3 && (
+          <div className="flex items-center gap-1 text-xs text-blue-600">
+            <span className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center text-white text-[10px]">→</span>
+            {milestone.currentGoal.toLocaleString('es-ES')}€ (Final)
           </div>
-        </div>
+        )}
+      </div>
+    </div>
+  )}
+</div>
+
 
         {/* Main CTA */}
         <button
