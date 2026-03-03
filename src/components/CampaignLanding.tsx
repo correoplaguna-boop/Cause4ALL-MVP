@@ -342,7 +342,7 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
               <button
                 key={option.price}
                 onClick={() => setSelectedOption(option)}
-                className={`relative p-5 rounded-2xl border-2 transition-all duration-200 ${
+                className={`relative p-4 rounded-2xl border-2 transition-all duration-200 text-left ${
                   selectedOption.price === option.price
                     ? 'border-primary-500 bg-white shadow-xl shadow-primary-500/30 scale-105'
                     : 'border-gray-200 bg-white/70 hover:bg-white hover:border-primary-300'
@@ -350,53 +350,44 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
               >
                 {option.featured && (
                   <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
-                    ⭐ MÁS ELEGIDO
+                    RECOMENDADO
                   </div>
                 )}
-                <div className="font-display text-3xl font-bold text-gray-900 mb-1">
-                  {option.price}€
+                
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-2xl">{option.icon}</span>
+                  <div>
+                    <div className="font-display text-2xl font-bold text-gray-900">
+                      {option.price}€
+                    </div>
+                    <div className="text-xs font-bold text-gray-700">
+                      {option.label}
+                    </div>
+                  </div>
                 </div>
-                <div className="text-xs font-bold text-gray-700 mb-1">
-                  {option.label}
-                </div>
-                <div className="text-xs text-gray-500">
-                  {option.sublabel}
+                
+                <div className="text-[10px] text-gray-600 leading-relaxed">
+                  {option.details}
                 </div>
               </button>
             ))}
           </div>
 
           <button
-  key={option.price}
-  onClick={() => setSelectedOption(option)}
-  className={`relative p-4 rounded-2xl border-2 transition-all duration-200 text-left ${
-    selectedOption.price === option.price
-      ? 'border-primary-500 bg-white shadow-xl shadow-primary-500/30 scale-105'
-      : 'border-gray-200 bg-white/70 hover:bg-white hover:border-primary-300'
-  }`}
->
-  {option.featured && (
-    <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
-      RECOMENDADO
-    </div>
-  )}
-  
-  <div className="flex items-center gap-2 mb-2">
-    <span className="text-2xl">{option.icon}</span>
-    <div>
-      <div className="font-display text-2xl font-bold text-gray-900">
-        {option.price}€
-      </div>
-      <div className="text-xs font-bold text-gray-700">
-        {option.label}
-      </div>
-    </div>
-  </div>
-  
-  <div className="text-[10px] text-gray-600 leading-relaxed">
-    {option.details}
-  </div>
-</button>
+            onClick={handleDonate}
+            disabled={isLoading}
+            className="w-full btn-primary text-lg py-4 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? '⏳ Procesando...' : `APORTAR ${selectedOption.price}€`}
+          </button>
+
+          <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl">
+            <p className="text-xs text-green-800 text-center font-medium">
+              ✓ Pago 100% seguro con Stripe<br/>
+              ✓ Certificado de donación por email
+            </p>
+          </div>
+        </section>
 
         {/* Prize draw */}
         {campaign.prize_title && (
@@ -477,4 +468,3 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
     </div>
   )
 }
-
