@@ -467,6 +467,3 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
     </div>
   )
 }
-    </div>
-  )
-}
