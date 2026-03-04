@@ -26,7 +26,7 @@ const PRICE_OPTIONS = [
     price: 7.5, 
     label: 'Opción estándar', 
     icon: '⭐',
-    details: '🧴 1 producto  • ❤️ 5€ apoyo • 🎟 1 participación',
+    details: '🧴 1 atomizador recargable  • ❤️ 5€ apoyo • 🎟 1 participación',
     donation: 5, 
     product: 2.5,
     tickets: 1,
