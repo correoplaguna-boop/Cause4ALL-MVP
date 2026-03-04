@@ -17,7 +17,7 @@ const PRICE_OPTIONS = [
     price: 5, 
     label: 'Donación directa', 
     icon: '🟢',
-    details: '❤️ 5€ donación   🎟 1 participación',
+    details: '❤️ 5€ donación • 🎟 1 participación',
     donation: 5, 
     product: 0,
     tickets: 1
@@ -26,7 +26,7 @@ const PRICE_OPTIONS = [
     price: 7.5, 
     label: 'Opción estándar', 
     icon: '⭐',
-    details: ' 📦1 producto 2,5€         ❤️ 5€ donación          🎟 1 participación',
+    details: '🧴 1 producto  • ❤️ 5€ apoyo • 🎟 1 participación',
     donation: 5, 
     product: 2.5,
     tickets: 1,
@@ -36,7 +36,7 @@ const PRICE_OPTIONS = [
     price: 10, 
     label: 'Generoso', 
     icon: '💚',
-    details: ' 📦1 producto              ❤️ 7,5€ donación           🎟 1 participación',
+    details: '🧴 atomizador recargable • ❤️ 7,5€ apoyo • 🎟 1 participación',
     donation: 7.5, 
     product: 2.5,
     tickets: 1
@@ -45,7 +45,7 @@ const PRICE_OPTIONS = [
     price: 15, 
     label: 'Doble apoyo', 
     icon: '🎁',
-    details: ' 📦📦2 productos            ❤️ 10€ donación            🎟🎟 2 participaciones',
+    details: '🧴🧴 atomizadores recargables • ❤️ 10€ apoyo • 🎟 2 participaciones',
     donation: 10, 
     product: 5,
     tickets: 2
@@ -54,7 +54,7 @@ const PRICE_OPTIONS = [
     price: 20, 
     label: 'Muy generoso', 
     icon: '🌟',
-    details: ' 📦1 producto             ❤️ 17,5€ donación           🎟🎟🎟 3 participaciones',
+    details: '🧴 atomizador recargable • ❤️ 17,5€ apoyo • 🎟 2 participaciones',
     donation: 17.5, 
     product: 2.5,
     tickets: 2
@@ -63,13 +63,12 @@ const PRICE_OPTIONS = [
     price: 22.5, 
     label: 'Triple apoyo', 
     icon: '💎',
-    details: ' 📦📦📦3 productos          ❤️ 15€ donación           🎟🎟🎟 3 participaciones',
+    details: '🧴🧴🧴 atomizadores recargables • ❤️ 15€ apoyo • 🎟 3 participaciones',
     donation: 15, 
     product: 7.5,
     tickets: 3
   },
 ]
-
 
 export default function CampaignLanding({ campaign, stats }: CampaignLandingProps) {
   const [selectedOption, setSelectedOption] = useState(PRICE_OPTIONS[1])
@@ -81,7 +80,6 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
   const milestone = getCurrentMilestone(campaign)
   const progress = milestone.progress
 
-  // Animate counter on load
   useEffect(() => {
     const duration = 2000
     const steps = 60
@@ -134,15 +132,13 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
     } finally {
       setIsLoading(false)
     }
-  }  
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-warm-50 via-warm-100 to-warm-200 relative overflow-hidden">
-      {/* Background decorations */}
       <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-gradient-radial from-orange-200/20 to-transparent rounded-full pointer-events-none" />
       <div className="absolute bottom-[20%] left-[-10%] w-[500px] h-[500px] bg-gradient-radial from-green-200/15 to-transparent rounded-full pointer-events-none" />
 
-      {/* Confetti */}
       {showConfetti && (
         <div className="fixed inset-0 pointer-events-none z-50">
           {[...Array(50)].map((_, i) => (
@@ -162,9 +158,7 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
         </div>
       )}
 
-      {/* Header */}
       <header className="px-5 py-5 max-w-lg mx-auto">
-        {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-6 animate-slide-up">
           <img 
             src="/logo.svg" 
@@ -173,7 +167,6 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           />
         </div>
 
-        {/* Main image */}
         <div className="rounded-3xl overflow-hidden mb-6 shadow-2xl shadow-black/10 relative animate-slide-up animate-delay-100">
           <div className="w-full h-56 bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center relative overflow-hidden">
             {campaign.image_url ? (
@@ -210,7 +203,6 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           </div>
         </div>
 
-        {/* Title */}
         <div className="animate-slide-up animate-delay-200">
           <h1 className="font-display text-3xl font-extrabold text-gray-900 mb-2 leading-tight">
             {campaign.title}
@@ -222,7 +214,6 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           )}
         </div>
 
-        {/* Progress card */}
         <div className="card mb-4 animate-slide-up animate-delay-300">
           <div className="flex justify-between items-center mb-2">
             <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
@@ -285,58 +276,15 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           )}
         </div>
 
-        {/* CTA que hace scroll - NO decide por el usuario */}
         <button
           onClick={scrollToSelection}
           className="w-full btn-primary text-lg py-4 animate-pulse-glow animate-slide-up animate-delay-400"
         >
-          {/* Producto Solidario - NUEVA SECCIÓN */}
-        {campaign.product_name && (
-          <section className="card bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200">
-            <h2 className="font-display text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <span className="text-2xl">🛍</span> El producto solidario
-            </h2>
-            
-            <div className="bg-white rounded-2xl p-4">
-              <div className="flex gap-4">
-                {campaign.product_image_url ? (
-                  <img 
-                    src={campaign.product_image_url} 
-                    alt={campaign.product_name}
-                    className="w-24 h-24 rounded-xl object-cover shrink-0"
-                  />
-                ) : (
-                  <div className="w-24 h-24 bg-gradient-to-br from-amber-200 to-orange-200 rounded-xl flex items-center justify-center text-4xl shrink-0">
-                    🎁
-                  </div>
-                )}
-                
-                <div className="flex-1">
-                  <h3 className="font-bold text-gray-900 mb-1">{campaign.product_name}</h3>
-                  {campaign.product_description && (
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      {campaign.product_description}
-                    </p>
-                  )}
-                  <p className="text-xs text-amber-700 mt-2 font-medium">
-                    Valor simbólico: 2,50€
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <p className="text-xs text-amber-800 text-center mt-3 italic">
-              ℹ️ El producto es simbólico. Tu aportación va íntegra a la causa.
-            </p>
-          </section>
-        )}
           👇 Elige tu aportación
         </button>
       </header>
 
-      {/* Content sections */}
       <main className="max-w-lg mx-auto px-5 pb-10 space-y-4">
-        {/* About */}
         <section className="card">
           <h2 className="font-display text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
             <span className="w-8 h-8 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center text-base">💚</span>
@@ -347,7 +295,6 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           </p>
         </section>
 
-        {/* How it works - SIMPLIFICADO */}
         <section className="card bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-100">
           <h2 className="font-display text-xl font-bold text-gray-900 mb-4 text-center">
             Cómo funciona
@@ -368,20 +315,19 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           </div>
         </section>
 
-        {/* Producto Solidario - VERSIÓN MEJORADA */}
         {campaign.product_name && (
-          <section className="card-warm">
+          <section ref={selectionRef} className="card-warm">
             <h2 className="font-display text-2xl font-bold text-gray-900 mb-4 text-center">
-              🛍 El producto solidario
+              🧴 El producto solidario
             </h2>
             
             <div className="bg-white rounded-2xl p-6 mb-5">
               {campaign.product_image_url && (
-                <div className="mb-4 flex justify-center">
+                <div className="mb-4">
                   <img 
                     src={campaign.product_image_url} 
                     alt={campaign.product_name}
-                    className="w-full max-w-xs h-48 rounded-xl object-cover shadow-lg"
+                    className="w-full h-56 rounded-xl object-cover shadow-lg mx-auto"
                   />
                 </div>
               )}
@@ -391,7 +337,7 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
               </h3>
               
               {campaign.product_description && (
-                <p className="text-gray-700 leading-relaxed text-center mb-4">
+                <p className="text-gray-700 leading-relaxed text-center mb-4 text-base">
                   {campaign.product_description}
                 </p>
               )}
@@ -404,7 +350,6 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
               </div>
             </div>
 
-            {/* Elige tu aportación - INTEGRADO AQUÍ */}
             <h3 className="font-display text-xl font-bold text-gray-900 mb-3 text-center">
               💝 Elige tu aportación
             </h3>
@@ -464,7 +409,6 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           </section>
         )}
 
-        {/* Prize draw */}
         {campaign.prize_title && (
           <section className="card-success relative overflow-hidden">
             <div className="absolute -top-5 -right-5 text-7xl opacity-10">🎉</div>
@@ -498,7 +442,6 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           </section>
         )}
 
-        {/* Organizer */}
         {campaign.organization && (
           <section className="card">
             <h2 className="font-display text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
@@ -519,7 +462,6 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           </section>
         )}
 
-        {/* Footer */}
         <footer className="text-center pt-6">
           <div className="flex justify-center gap-4 flex-wrap mb-4">
             {['Bases del sorteo', 'Política de privacidad', 'Aviso legal'].map((link) => (
