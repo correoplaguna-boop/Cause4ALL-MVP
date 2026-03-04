@@ -20,30 +20,34 @@ export interface Organization {
 export interface Campaign {
   id: string
   organization_id: string
-  slug: string
+  organization?: Organization
   title: string
-  subtitle?: string
+  subtitle: string | null
+  slug: string
   description: string
   cause_type: 'escolar' | 'deportiva' | 'social'
-  image_url?: string
   goal_amount: number
-  current_amount: number
   goal_milestone_1?: number
   goal_milestone_2?: number
   goal_milestone_3?: number
+  current_amount: number
   product_price: number
   donation_amount: number
-  prize_title?: string
-  prize_description?: string
-  prize_image_url?: string
-  prize_type?: 'material' | 'experiencia' | 'digital'
-  draw_date?: string
+  image_url: string | null
+  // ⭐ NUEVOS CAMPOS DE PRODUCTO
+  product_name: string | null
+  product_description: string | null
+  product_image_url: string | null
+  // FIN NUEVOS CAMPOS
+  prize_title: string | null
+  prize_image_url: string | null
+  prize_type: 'material' | 'experiencia' | 'digital' | null
+  draw_date: string | null
   start_date: string
-  end_date?: string
+  end_date: string | null
   status: 'draft' | 'active' | 'ended' | 'cancelled'
   created_at: string
-  // Joined data
-  organization?: Organization
+  updated_at: string
 }
 
 export interface Donation {
