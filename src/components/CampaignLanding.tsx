@@ -368,65 +368,101 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           </div>
         </section>
 
-        {/* Product selection - MEJORADO */}
-        <section ref={selectionRef} className="card-warm">
-          <h2 className="font-display text-2xl font-bold text-gray-900 mb-2 text-center">
-            💝 Elige tu aportación
-          </h2>
-          <p className="text-sm text-amber-800 text-center mb-6 font-medium">
-            Tu aportación va íntegra a la causa + participas en el sorteo
-          </p>
-
-          <div className="grid grid-cols-2 gap-3 mb-5">
-            {PRICE_OPTIONS.map((option) => (
-              <button
-                key={option.price}
-                onClick={() => setSelectedOption(option)}
-                className={`relative p-4 rounded-2xl border-2 transition-all duration-200 text-left ${
-                  selectedOption.price === option.price
-                    ? 'border-primary-500 bg-white shadow-xl shadow-primary-500/30 scale-105'
-                    : 'border-gray-200 bg-white/70 hover:bg-white hover:border-primary-300'
-                }`}
-              >
-                {option.featured && (
-                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
-                    RECOMENDADO
-                  </div>
-                )}
-                
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-2xl">{option.icon}</span>
-                  <div>
-                    <div className="font-display text-2xl font-bold text-gray-900">
-                      {option.price}€
-                    </div>
-                    <div className="text-xs font-bold text-gray-700">
-                      {option.label}
-                    </div>
-                  </div>
+        {/* Producto Solidario - VERSIÓN MEJORADA */}
+        {campaign.product_name && (
+          <section className="card-warm">
+            <h2 className="font-display text-2xl font-bold text-gray-900 mb-4 text-center">
+              🛍 El producto solidario
+            </h2>
+            
+            <div className="bg-white rounded-2xl p-6 mb-5">
+              {campaign.product_image_url && (
+                <div className="mb-4 flex justify-center">
+                  <img 
+                    src={campaign.product_image_url} 
+                    alt={campaign.product_name}
+                    className="w-full max-w-xs h-48 rounded-xl object-cover shadow-lg"
+                  />
                 </div>
-                
-                <div className="text-[10px] text-gray-600 leading-relaxed">
-                  {option.details}
-                </div>
-              </button>
-            ))}
-          </div>
+              )}
+              
+              <h3 className="font-display text-xl font-bold text-gray-900 mb-3 text-center">
+                {campaign.product_name}
+              </h3>
+              
+              {campaign.product_description && (
+                <p className="text-gray-700 leading-relaxed text-center mb-4">
+                  {campaign.product_description}
+                </p>
+              )}
 
-          <button
-            onClick={handleDonate}
-            disabled={isLoading}
-            className="w-full btn-primary text-lg py-4 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? '⏳ Procesando...' : `APORTAR ${selectedOption.price}€`}
-          </button>
+              <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
+                <p className="text-sm text-amber-900 text-center font-medium">
+                  💰 Valor del producto: 2,50€<br/>
+                  <span className="text-xs">La mayor parte de tu aportación va directamente a la causa</span>
+                </p>
+              </div>
+            </div>
 
-          <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl">
-            <p className="text-xs text-green-800 text-center font-medium">
-              ✓ Pago 100% seguro con Stripe<br/>
+            {/* Elige tu aportación - INTEGRADO AQUÍ */}
+            <h3 className="font-display text-xl font-bold text-gray-900 mb-3 text-center">
+              💝 Elige tu aportación
+            </h3>
+            <p className="text-sm text-amber-800 text-center mb-5 font-medium">
+              Incluye el producto + apoyas la causa + participas en el sorteo
             </p>
-          </div>
-        </section>
+
+            <div className="grid grid-cols-2 gap-3 mb-5">
+              {PRICE_OPTIONS.map((option) => (
+                <button
+                  key={option.price}
+                  onClick={() => setSelectedOption(option)}
+                  className={`relative p-4 rounded-2xl border-2 transition-all duration-200 text-left ${
+                    selectedOption.price === option.price
+                      ? 'border-primary-500 bg-white shadow-xl shadow-primary-500/30 scale-105'
+                      : 'border-gray-200 bg-white/70 hover:bg-white hover:border-primary-300'
+                  }`}
+                >
+                  {option.featured && (
+                    <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
+                      RECOMENDADO
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-2xl">{option.icon}</span>
+                    <div>
+                      <div className="font-display text-2xl font-bold text-gray-900">
+                        {option.price}€
+                      </div>
+                      <div className="text-xs font-bold text-gray-700">
+                        {option.label}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="text-[10px] text-gray-600 leading-relaxed">
+                    {option.details}
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={handleDonate}
+              disabled={isLoading}
+              className="w-full btn-primary text-lg py-4 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? '⏳ Procesando...' : `APORTAR ${selectedOption.price}€`}
+            </button>
+
+            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl">
+              <p className="text-xs text-green-800 text-center font-medium">
+                ✓ Pago 100% seguro con Stripe
+              </p>
+            </div>
+          </section>
+        )}
 
         {/* Prize draw */}
         {campaign.prize_title && (
