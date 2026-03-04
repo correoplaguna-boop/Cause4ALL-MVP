@@ -315,41 +315,45 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           </div>
         </section>
 
+        {/* Producto Solidario - VERSIÓN MEJORADA */}
         {campaign.product_name && (
-          <section ref={selectionRef} className="card-warm">
+          <section className="card-warm">
             <h2 className="font-display text-2xl font-bold text-gray-900 mb-4 text-center">
               🧴 El producto solidario
             </h2>
             
+            {/* Imagen grande horizontal como la principal */}
+            {campaign.product_image_url && (
+              <div className="rounded-2xl overflow-hidden mb-5 shadow-xl">
+                <img 
+                  src={campaign.product_image_url} 
+                  alt={campaign.product_name}
+                  className="w-full h-56 object-cover"
+                />
+              </div>
+            )}
+
             <div className="bg-white rounded-2xl p-6 mb-5">
-              {campaign.product_image_url && (
-                <div className="mb-4">
-                  <img 
-                    src={campaign.product_image_url} 
-                    alt={campaign.product_name}
-                    className="w-full h-56 rounded-xl object-cover shadow-lg mx-auto"
-                  />
-                </div>
-              )}
               
               <h3 className="font-display text-xl font-bold text-gray-900 mb-3 text-center">
                 {campaign.product_name}
               </h3>
               
               {campaign.product_description && (
-                <p className="text-gray-700 leading-relaxed text-center mb-4 text-base">
+                <p className="text-gray-700 leading-relaxed text-center mb-4">
                   {campaign.product_description}
                 </p>
               )}
 
               <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
                 <p className="text-sm text-amber-900 text-center font-medium">
-                  💰 Valor del producto: 2,50€<br/>
+                  💰 Precio del producto 2,5€ Valor del producto: 7,50€<br/>
                   <span className="text-xs">La mayor parte de tu aportación va directamente a la causa</span>
                 </p>
               </div>
             </div>
 
+            {/* Elige tu aportación - INTEGRADO AQUÍ */}
             <h3 className="font-display text-xl font-bold text-gray-900 mb-3 text-center">
               💝 Elige tu aportación
             </h3>
