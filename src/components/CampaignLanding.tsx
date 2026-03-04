@@ -290,6 +290,46 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           onClick={scrollToSelection}
           className="w-full btn-primary text-lg py-4 animate-pulse-glow animate-slide-up animate-delay-400"
         >
+          {/* Producto Solidario - NUEVA SECCIÓN */}
+        {campaign.product_name && (
+          <section className="card bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200">
+            <h2 className="font-display text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span className="text-2xl">🛍</span> El producto solidario
+            </h2>
+            
+            <div className="bg-white rounded-2xl p-4">
+              <div className="flex gap-4">
+                {campaign.product_image_url ? (
+                  <img 
+                    src={campaign.product_image_url} 
+                    alt={campaign.product_name}
+                    className="w-24 h-24 rounded-xl object-cover shrink-0"
+                  />
+                ) : (
+                  <div className="w-24 h-24 bg-gradient-to-br from-amber-200 to-orange-200 rounded-xl flex items-center justify-center text-4xl shrink-0">
+                    🎁
+                  </div>
+                )}
+                
+                <div className="flex-1">
+                  <h3 className="font-bold text-gray-900 mb-1">{campaign.product_name}</h3>
+                  {campaign.product_description && (
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      {campaign.product_description}
+                    </p>
+                  )}
+                  <p className="text-xs text-amber-700 mt-2 font-medium">
+                    Valor simbólico: 2,50€
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-xs text-amber-800 text-center mt-3 italic">
+              ℹ️ El producto es simbólico. Tu aportación va íntegra a la causa.
+            </p>
+          </section>
+        )}
           👇 Elige tu aportación
         </button>
       </header>
