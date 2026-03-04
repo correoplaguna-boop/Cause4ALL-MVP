@@ -17,26 +17,32 @@ export default function AdminPage() {
 
   // Form state - AHORA CON MILESTONES
   const [formData, setFormData] = useState({
-    organization_id: '',
-    organization_name: '',
-    title: '',
-    subtitle: '',
-    slug: '',
-    description: '',
-    cause_type: 'escolar' as 'escolar' | 'deportiva' | 'social',
-    goal_amount: 3000,
-    goal_milestone_1: null as number | null,
-    goal_milestone_2: null as number | null,
-    goal_milestone_3: 3000,
-    product_price: 7.5,
-    donation_amount: 5,
-    image_url: '',
-    prize_title: '',
-    prize_image_url: '',
-    prize_type: 'material' as 'material' | 'experiencia' | 'digital',
-    draw_date: '',
-    end_date: '',
-  })
+  organization_id: '',
+  organization_name: '',
+  title: '',
+  subtitle: '',
+  slug: '',
+  description: '',
+  cause_type: 'escolar' as 'escolar' | 'deportiva' | 'social',
+  goal_amount: 3000,
+  goal_milestone_1: null as number | null,
+  goal_milestone_2: null as number | null,
+  goal_milestone_3: 3000,
+  product_price: 7.5,
+  donation_amount: 5,
+  image_url: '',
+  // ⭐ NUEVOS CAMPOS DE PRODUCTO
+  product_name: 'Ambientador recargable',
+  product_description: 'Ambientador de coche recargable con aroma a elección. Producto simbólico de valor 2,50€.',
+  product_image_url: '',
+  // FIN NUEVOS CAMPOS
+  prize_title: '',
+  prize_image_url: '',
+  prize_type: 'material' as 'material' | 'experiencia' | 'digital',
+  draw_date: '',
+  end_date: '',
+})
+
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
@@ -119,28 +125,33 @@ export default function AdminPage() {
 
     // Sincronizar goal_amount con goal_milestone_3
     const campaignData = {
-      organization_id: orgId,
-      title: formData.title,
-      subtitle: formData.subtitle,
-      slug: formData.slug,
-      description: formData.description,
-      cause_type: formData.cause_type,
-      goal_amount: formData.goal_milestone_3, // Sincronizado
-      goal_milestone_1: formData.goal_milestone_1,
-      goal_milestone_2: formData.goal_milestone_2,
-      goal_milestone_3: formData.goal_milestone_3,
-      product_price: formData.product_price,
-      donation_amount: formData.donation_amount,
-      image_url: formData.image_url || null,
-      prize_title: formData.prize_title || null,
-      prize_image_url: formData.prize_image_url || null,
-      prize_type: formData.prize_type,
-      draw_date: formData.draw_date || null,
-      end_date: formData.end_date || null,
-      current_amount: editingCampaign?.current_amount || 0,
-      status: 'active',
-      start_date: new Date().toISOString(),
-    }
+  organization_id: orgId,
+  title: formData.title,
+  subtitle: formData.subtitle,
+  slug: formData.slug,
+  description: formData.description,
+  cause_type: formData.cause_type,
+  goal_amount: formData.goal_milestone_3,
+  goal_milestone_1: formData.goal_milestone_1,
+  goal_milestone_2: formData.goal_milestone_2,
+  goal_milestone_3: formData.goal_milestone_3,
+  product_price: formData.product_price,
+  donation_amount: formData.donation_amount,
+  image_url: formData.image_url || null,
+  // ⭐ NUEVOS CAMPOS
+  product_name: formData.product_name || null,
+  product_description: formData.product_description || null,
+  product_image_url: formData.product_image_url || null,
+  // FIN NUEVOS
+  prize_title: formData.prize_title || null,
+  prize_image_url: formData.prize_image_url || null,
+  prize_type: formData.prize_type,
+  draw_date: formData.draw_date || null,
+  end_date: formData.end_date || null,
+  current_amount: editingCampaign?.current_amount || 0,
+  status: 'active',
+  start_date: new Date().toISOString(),
+}
 
     if (editingCampaign) {
       const { error } = await supabase
@@ -170,54 +181,63 @@ export default function AdminPage() {
   }
 
   const resetForm = () => {
-    setFormData({
-      organization_id: '',
-      organization_name: '',
-      title: '',
-      subtitle: '',
-      slug: '',
-      description: '',
-      cause_type: 'escolar',
-      goal_amount: 3000,
-      goal_milestone_1: null,
-      goal_milestone_2: null,
-      goal_milestone_3: 3000,
-      product_price: 7.5,
-      donation_amount: 5,
-      image_url: '',
-      prize_title: '',
-      prize_image_url: '',
-      prize_type: 'material',
-      draw_date: '',
-      end_date: '',
-    })
-  }
-
+  setFormData({
+    organization_id: '',
+    organization_name: '',
+    title: '',
+    subtitle: '',
+    slug: '',
+    description: '',
+    cause_type: 'escolar',
+    goal_amount: 3000,
+    goal_milestone_1: null,
+    goal_milestone_2: null,
+    goal_milestone_3: 3000,
+    product_price: 7.5,
+    donation_amount: 5,
+    image_url: '',
+    // ⭐ NUEVOS CAMPOS
+    product_name: 'Ambientador recargable',
+    product_description: 'Ambientador de coche recargable con aroma a elección.',
+    product_image_url: '',
+    // FIN
+    prize_title: '',
+    prize_image_url: '',
+    prize_type: 'material',
+    draw_date: '',
+    end_date: '',
+  })
+}
   const handleEdit = (campaign: Campaign) => {
-    setFormData({
-      organization_id: campaign.organization_id,
-      organization_name: campaign.organization?.name || '',
-      title: campaign.title,
-      subtitle: campaign.subtitle || '',
-      slug: campaign.slug,
-      description: campaign.description,
-      cause_type: campaign.cause_type,
-      goal_amount: campaign.goal_amount,
-      goal_milestone_1: campaign.goal_milestone_1 || null,
-      goal_milestone_2: campaign.goal_milestone_2 || null,
-      goal_milestone_3: campaign.goal_milestone_3 || campaign.goal_amount,
-      product_price: campaign.product_price,
-      donation_amount: campaign.donation_amount,
-      image_url: campaign.image_url || '',
-      prize_title: campaign.prize_title || '',
-      prize_image_url: campaign.prize_image_url || '',
-      prize_type: campaign.prize_type || 'material',
-      draw_date: campaign.draw_date ? new Date(campaign.draw_date).toISOString().split('T')[0] : '',
-      end_date: campaign.end_date ? new Date(campaign.end_date).toISOString().split('T')[0] : '',
-    })
-    setEditingCampaign(campaign)
-    setShowForm(true)
-  }
+  setFormData({
+    organization_id: campaign.organization_id,
+    organization_name: campaign.organization?.name || '',
+    title: campaign.title,
+    subtitle: campaign.subtitle || '',
+    slug: campaign.slug,
+    description: campaign.description,
+    cause_type: campaign.cause_type,
+    goal_amount: campaign.goal_amount,
+    goal_milestone_1: campaign.goal_milestone_1 || null,
+    goal_milestone_2: campaign.goal_milestone_2 || null,
+    goal_milestone_3: campaign.goal_milestone_3 || campaign.goal_amount,
+    product_price: campaign.product_price,
+    donation_amount: campaign.donation_amount,
+    image_url: campaign.image_url || '',
+    // ⭐ NUEVOS CAMPOS
+    product_name: campaign.product_name || 'Ambientador recargable',
+    product_description: campaign.product_description || '',
+    product_image_url: campaign.product_image_url || '',
+    // FIN
+    prize_title: campaign.prize_title || '',
+    prize_image_url: campaign.prize_image_url || '',
+    prize_type: campaign.prize_type || 'material',
+    draw_date: campaign.draw_date ? new Date(campaign.draw_date).toISOString().split('T')[0] : '',
+    end_date: campaign.end_date ? new Date(campaign.end_date).toISOString().split('T')[0] : '',
+  })
+  setEditingCampaign(campaign)
+  setShowForm(true)
+}
 
   const handleStatusChange = async (campaign: Campaign, newStatus: string) => {
     const { error } = await supabase
@@ -561,6 +581,69 @@ export default function AdminPage() {
                 </select>
               </div>
 
+              {/* PRODUCTO SOLIDARIO */}
+<div className="space-y-4 bg-amber-50 p-5 rounded-xl border-2 border-amber-200">
+  <h3 className="font-display text-lg font-bold text-gray-900 flex items-center gap-2">
+    <span className="text-xl">🛍</span> Producto solidario
+  </h3>
+  
+  <div>
+    <label className="block text-sm font-semibold text-gray-700 mb-2">
+      Nombre del producto *
+    </label>
+    <input
+      type="text"
+      required
+      value={formData.product_name}
+      onChange={(e) => setFormData(prev => ({ ...prev, product_name: e.target.value }))}
+      placeholder="Ej: Ambientador recargable"
+      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"
+    />
+  </div>
+
+  <div>
+    <label className="block text-sm font-semibold text-gray-700 mb-2">
+      Descripción del producto
+    </label>
+    <textarea
+      rows={2}
+      value={formData.product_description}
+      onChange={(e) => setFormData(prev => ({ ...prev, product_description: e.target.value }))}
+      placeholder="Ej: Ambientador de coche recargable con aroma a elección"
+      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none resize-none"
+    />
+  </div>
+
+  <div>
+    <label className="block text-sm font-semibold text-gray-700 mb-2">
+      🖼️ Imagen del producto
+      <span className="text-gray-400 font-normal ml-2">(URL de la imagen)</span>
+    </label>
+    <input
+      type="url"
+      value={formData.product_image_url}
+      onChange={(e) => setFormData(prev => ({ ...prev, product_image_url: e.target.value }))}
+      placeholder="https://ejemplo.com/producto.jpg"
+      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"
+    />
+    {formData.product_image_url && (
+      <div className="mt-3 rounded-xl overflow-hidden border border-gray-200 bg-white flex items-center justify-center p-4">
+        <img 
+          src={formData.product_image_url} 
+          alt="Preview producto" 
+          className="max-h-32 object-contain"
+          onError={(e) => {
+            e.currentTarget.style.display = 'none'
+          }}
+        />
+      </div>
+    )}
+  </div>
+
+  <p className="text-xs text-amber-700 italic">
+    💡 Este producto se mostrará en la página de la campaña. Durante la fase MVP suele ser el mismo para todas las campañas.
+  </p>
+</div>
               {/* OBJETIVOS PROGRESIVOS - LA PARTE IMPORTANTE */}
               <div className="space-y-3 bg-gradient-to-br from-blue-50 to-purple-50 p-5 rounded-xl border-2 border-blue-100">
                 <label className="block text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
