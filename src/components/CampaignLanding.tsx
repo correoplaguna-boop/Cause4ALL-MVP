@@ -26,7 +26,7 @@ const PRICE_OPTIONS = [
     price: 7.5, 
     label: 'Opción estándar', 
     icon: '⭐',
-    details: '🧴 1 atomizador recargable  • ❤️ 5€ apoyo • 🎟 1 participación',
+    details: '🧴 1 atomizador recargable • ❤️ 5€ apoyo • 🎟 1 participación',
     donation: 5, 
     product: 2.5,
     tickets: 1,
@@ -315,14 +315,12 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           </div>
         </section>
 
-        {/* Producto Solidario - VERSIÓN MEJORADA */}
         {campaign.product_name && (
-          <section className="card-warm">
+          <section ref={selectionRef} className="card-warm">
             <h2 className="font-display text-2xl font-bold text-gray-900 mb-4 text-center">
               🧴 El producto solidario
             </h2>
             
-            {/* Imagen grande horizontal como la principal */}
             {campaign.product_image_url && (
               <div className="rounded-2xl overflow-hidden mb-5 shadow-xl">
                 <img 
@@ -334,35 +332,24 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
             )}
 
             <div className="bg-white rounded-2xl p-6 mb-5">
-              
               <h3 className="font-display text-xl font-bold text-gray-900 mb-3 text-center">
                 {campaign.product_name}
               </h3>
               
-           {campaign.product_description && (
+              {campaign.product_description && (
                 <p className="text-gray-700 leading-relaxed text-center mb-4 whitespace-pre-line">
                   {campaign.product_description}
                 </p>
               )}
-```
-Compra un producto muy útil, de uso diario a precio de mercado y ayúdanos a conseguir nuestro objetivo
-
-Recarga directa desde tu perfume
-Perfecto para bolso, viaje, gimnasio
-Producto útil de uso diario
-Precio de mercado
-💚 Apoyas la causa
-              )}
 
               <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
                 <p className="text-sm text-amber-900 text-center font-medium">
-                  💰 Precio del producto 2,5€ Valor del producto: 7,50€<br/>
+                  💰 Precio del producto: 2,50€ · Valor: 7,50€<br/>
                   <span className="text-xs">La mayor parte de tu aportación va directamente a la causa</span>
                 </p>
               </div>
             </div>
 
-            {/* Elige tu aportación - INTEGRADO AQUÍ */}
             <h3 className="font-display text-xl font-bold text-gray-900 mb-3 text-center">
               💝 Elige tu aportación
             </h3>
