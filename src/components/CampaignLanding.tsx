@@ -339,15 +339,11 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
                 {campaign.product_name}
               </h3>
               
-              {campaign.product_description && (
+           {campaign.product_description && (
                 <p className="text-gray-700 leading-relaxed text-center mb-4 whitespace-pre-line">
-  {campaign.product_description}
-</p>
-```
-
----
-
-## 📝 En el Admin, escribe así (SIN `\n*`):
+                  {campaign.product_description}
+                </p>
+              )}
 ```
 Compra un producto muy útil, de uso diario a precio de mercado y ayúdanos a conseguir nuestro objetivo
 
