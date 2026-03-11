@@ -167,8 +167,12 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           />
         </div>
 
+        {/* FIX 1: Banner con aspect-ratio 16/9 en vez de h-56 fijo */}
         <div className="rounded-3xl overflow-hidden mb-6 shadow-2xl shadow-black/10 relative animate-slide-up animate-delay-100">
-          <div className="w-full h-56 bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center relative overflow-hidden">
+          <div
+            className="w-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center relative overflow-hidden"
+            style={{ aspectRatio: '16/9' }}
+          >
             {campaign.image_url ? (
               <img 
                 src={campaign.image_url} 
@@ -285,48 +289,21 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
       </header>
 
       <main className="max-w-lg mx-auto px-5 pb-10 space-y-4">
-        <section className="card">
-          <h2 className="font-display text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
-            <span className="w-8 h-8 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center text-base">💚</span>
-            ¿Cuál es nuestra causa?
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            {campaign.description}
-          </p>
-        </section>
 
-        <section className="card bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-100">
-          <h2 className="font-display text-xl font-bold text-gray-900 mb-4 text-center">
-            Cómo funciona
-          </h2>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 bg-white/80 p-4 rounded-xl">
-              <span className="text-3xl">🔵</span>
-              <p className="text-gray-800 font-semibold">Aportas desde 5€</p>
-            </div>
-            <div className="flex items-center gap-3 bg-white/80 p-4 rounded-xl">
-              <span className="text-3xl">🎁</span>
-              <p className="text-gray-800 font-semibold">Participas en el sorteo</p>
-            </div>
-            <div className="flex items-center gap-3 bg-white/80 p-4 rounded-xl">
-              <span className="text-3xl">❤️</span>
-              <p className="text-gray-800 font-semibold">Ayudas a {campaign.organization?.name || 'la causa'}</p>
-            </div>
-          </div>
-        </section>
-
+        {/* MOVIDO AQUÍ: El producto solidario, entre el botón CTA y "¿Cuál es nuestra causa?" */}
         {campaign.product_name && (
           <section ref={selectionRef} className="card-warm">
             <h2 className="font-display text-2xl font-bold text-gray-900 mb-4 text-center">
               🧴 El producto solidario
             </h2>
             
+            {/* FIX 2: object-contain + max-h en vez de h-56 object-cover */}
             {campaign.product_image_url && (
               <div className="rounded-2xl overflow-hidden mb-5 shadow-xl">
                 <img 
                   src={campaign.product_image_url} 
                   alt={campaign.product_name}
-                  className="w-full h-56 object-cover"
+                  className="w-full max-h-72 object-contain bg-white"
                 />
               </div>
             )}
@@ -408,6 +385,36 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
             </div>
           </section>
         )}
+
+        <section className="card">
+          <h2 className="font-display text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+            <span className="w-8 h-8 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center text-base">💚</span>
+            ¿Cuál es nuestra causa?
+          </h2>
+          <p className="text-gray-600 leading-relaxed">
+            {campaign.description}
+          </p>
+        </section>
+
+        <section className="card bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-100">
+          <h2 className="font-display text-xl font-bold text-gray-900 mb-4 text-center">
+            Cómo funciona
+          </h2>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 bg-white/80 p-4 rounded-xl">
+              <span className="text-3xl">🔵</span>
+              <p className="text-gray-800 font-semibold">Aportas desde 5€</p>
+            </div>
+            <div className="flex items-center gap-3 bg-white/80 p-4 rounded-xl">
+              <span className="text-3xl">🎁</span>
+              <p className="text-gray-800 font-semibold">Participas en el sorteo</p>
+            </div>
+            <div className="flex items-center gap-3 bg-white/80 p-4 rounded-xl">
+              <span className="text-3xl">❤️</span>
+              <p className="text-gray-800 font-semibold">Ayudas a {campaign.organization?.name || 'la causa'}</p>
+            </div>
+          </div>
+        </section>
 
         {campaign.prize_title && (
           <section className="card-success relative overflow-hidden">
