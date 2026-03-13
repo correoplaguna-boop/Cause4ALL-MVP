@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { Campaign, getCurrentMilestone } from '@/lib/supabase'
 
 interface CampaignLandingProps {
@@ -76,6 +77,7 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
   const [animatedAmount, setAnimatedAmount] = useState(0)
   const [showConfetti, setShowConfetti] = useState(false)
   const selectionRef = useRef<HTMLElement>(null)
+  const router = useRouter()
 
   const milestone = getCurrentMilestone(campaign)
   const progress = milestone.progress
@@ -160,11 +162,13 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
 
       <header className="px-5 py-5 max-w-lg mx-auto">
         <div className="flex items-center justify-center gap-2 mb-6 animate-slide-up">
-          <img 
-            src="/logo.svg" 
-            alt="Cause4All" 
-            className="h-12 w-auto"
-          />
+          <button onClick={() => router.back()} className="focus:outline-none">
+            <img 
+              src="/logo.svg" 
+              alt="Cause4All" 
+              className="h-12 w-auto"
+            />
+          </button>
         </div>
 
         {/* FIX 1: Banner con aspect-ratio 16/9 en vez de h-56 fijo */}
