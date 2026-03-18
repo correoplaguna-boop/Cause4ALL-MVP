@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
 import { Campaign, getCurrentMilestone } from '@/lib/supabase'
 
 interface CampaignLandingProps {
@@ -77,7 +76,6 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
   const [animatedAmount, setAnimatedAmount] = useState(0)
   const [showConfetti, setShowConfetti] = useState(false)
   const selectionRef = useRef<HTMLElement>(null)
-  const router = useRouter()
 
   const milestone = getCurrentMilestone(campaign)
   const progress = milestone.progress
@@ -137,9 +135,7 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-warm-50 via-warm-100 to-warm-200 relative overflow-hidden">
-      <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-gradient-radial from-orange-200/20 to-transparent rounded-full pointer-events-none" />
-      <div className="absolute bottom-[20%] left-[-10%] w-[500px] h-[500px] bg-gradient-radial from-green-200/15 to-transparent rounded-full pointer-events-none" />
+    <div className="min-h-screen bg-white relative overflow-hidden">
 
       {showConfetti && (
         <div className="fixed inset-0 pointer-events-none z-50">
@@ -160,23 +156,17 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
         </div>
       )}
 
-      <header className="px-5 py-5 max-w-lg mx-auto">
-        <div className="flex items-center justify-center gap-2 mb-6 animate-slide-up">
-          <button onClick={() => router.back()} className="focus:outline-none">
-            <img 
-              src="/logo.svg" 
-              alt="Cause4All" 
-              className="h-12 w-auto"
-            />
-          </button>
+      <header className="px-5 py-6 max-w-lg mx-auto">
+        <div className="flex items-center justify-center gap-2 mb-8 animate-slide-up">
+          <img 
+            src="/logo.svg" 
+            alt="Cause4All" 
+            className="h-12 w-auto"
+          />
         </div>
 
-        {/* FIX 1: Banner con aspect-ratio 16/9 en vez de h-56 fijo */}
         <div className="rounded-3xl overflow-hidden mb-6 shadow-2xl shadow-black/10 relative animate-slide-up animate-delay-100">
-          <div
-            className="w-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center relative overflow-hidden"
-            style={{ aspectRatio: '16/9' }}
-          >
+          <div className="w-full h-56 bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center relative overflow-hidden">
             {campaign.image_url ? (
               <img 
                 src={campaign.image_url} 
@@ -222,7 +212,7 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           )}
         </div>
 
-        <div className="card mb-4 animate-slide-up animate-delay-300">
+        <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200 mb-6 animate-slide-up animate-delay-300">
           <div className="flex justify-between items-center mb-2">
             <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
               {milestone.phaseLabel}
@@ -286,28 +276,55 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
 
         <button
           onClick={scrollToSelection}
-          className="w-full btn-primary text-lg py-4 animate-pulse-glow animate-slide-up animate-delay-400"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-4 rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl"
         >
           👇 Elige tu aportación
         </button>
       </header>
 
-      <main className="max-w-lg mx-auto px-5 pb-10 space-y-4">
+      <main className="max-w-lg mx-auto px-5 pb-12 space-y-6">
+        <section className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
+          <h2 className="font-display text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+            <span className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center text-base">💚</span>
+            ¿Cuál es nuestra causa?
+          </h2>
+          <p className="text-gray-700 leading-relaxed">
+            {campaign.description}
+          </p>
+        </section>
 
-        {/* MOVIDO AQUÍ: El producto solidario, entre el botón CTA y "¿Cuál es nuestra causa?" */}
+        <section className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 shadow-md border border-blue-200">
+          <h2 className="font-display text-xl font-bold text-gray-900 mb-4 text-center">
+            Cómo funciona
+          </h2>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
+              <span className="text-3xl">🔵</span>
+              <p className="text-gray-800 font-semibold">Aportas desde 5€</p>
+            </div>
+            <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
+              <span className="text-3xl">🎁</span>
+              <p className="text-gray-800 font-semibold">Participas en el sorteo</p>
+            </div>
+            <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
+              <span className="text-3xl">❤️</span>
+              <p className="text-gray-800 font-semibold">Ayudas a {campaign.organization?.name || 'la causa'}</p>
+            </div>
+          </div>
+        </section>
+
         {campaign.product_name && (
-          <section ref={selectionRef} className="card-warm">
+          <section className="bg-amber-50 rounded-2xl p-6 shadow-md border border-amber-200">
             <h2 className="font-display text-2xl font-bold text-gray-900 mb-4 text-center">
               🧴 El producto solidario
             </h2>
             
-            {/* FIX 2: object-contain + max-h en vez de h-56 object-cover */}
             {campaign.product_image_url && (
               <div className="rounded-2xl overflow-hidden mb-5 shadow-xl">
                 <img 
                   src={campaign.product_image_url} 
                   alt={campaign.product_name}
-                  className="w-full max-h-72 object-contain bg-white"
+                  className="w-full h-56 object-cover"
                 />
               </div>
             )}
@@ -377,7 +394,7 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
             <button
               onClick={handleDonate}
               disabled={isLoading}
-              className="w-full btn-primary text-lg py-4 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold text-lg py-4 rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl disabled:cursor-not-allowed"
             >
               {isLoading ? '⏳ Procesando...' : `APORTAR ${selectedOption.price}€`}
             </button>
@@ -390,43 +407,13 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
           </section>
         )}
 
-        <section className="card">
-          <h2 className="font-display text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
-            <span className="w-8 h-8 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center text-base">💚</span>
-            ¿Cuál es nuestra causa?
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            {campaign.description}
-          </p>
-        </section>
-
-        <section className="card bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-100">
-          <h2 className="font-display text-xl font-bold text-gray-900 mb-4 text-center">
-            Cómo funciona
-          </h2>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 bg-white/80 p-4 rounded-xl">
-              <span className="text-3xl">🔵</span>
-              <p className="text-gray-800 font-semibold">Aportas desde 5€</p>
-            </div>
-            <div className="flex items-center gap-3 bg-white/80 p-4 rounded-xl">
-              <span className="text-3xl">🎁</span>
-              <p className="text-gray-800 font-semibold">Participas en el sorteo</p>
-            </div>
-            <div className="flex items-center gap-3 bg-white/80 p-4 rounded-xl">
-              <span className="text-3xl">❤️</span>
-              <p className="text-gray-800 font-semibold">Ayudas a {campaign.organization?.name || 'la causa'}</p>
-            </div>
-          </div>
-        </section>
-
         {campaign.prize_title && (
-          <section className="card-success relative overflow-hidden">
+          <section className="bg-green-50 rounded-2xl p-6 shadow-md border border-green-200 relative overflow-hidden">
             <div className="absolute -top-5 -right-5 text-7xl opacity-10">🎉</div>
             <h2 className="font-display text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               🎉 Sorteo solidario
             </h2>
-            <div className="bg-white rounded-2xl p-4 flex items-center gap-4">
+            <div className="bg-white rounded-2xl p-4 flex items-center gap-4 shadow-sm">
               {campaign.prize_image_url ? (
                 <img 
                   src={campaign.prize_image_url} 
@@ -441,22 +428,22 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
               <div>
                 <p className="font-bold text-gray-900">{campaign.prize_title}</p>
                 {campaign.draw_date && (
-                  <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                  <p className="text-sm text-gray-600 flex items-center gap-1 mt-1">
                     📅 Sorteo: {new Date(campaign.draw_date).toLocaleDateString('es-ES')}
                   </p>
                 )}
               </div>
             </div>
-            <p className="text-xs text-green-700 text-center mt-3 font-medium">
+            <p className="text-xs text-green-800 text-center mt-3 font-medium">
               Se anunciará el ganador por email
             </p>
           </section>
         )}
 
         {campaign.organization && (
-          <section className="card">
+          <section className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
             <h2 className="font-display text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <span className="w-8 h-8 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center text-base">🏫</span>
+              <span className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center text-base">🏫</span>
               Quién organiza
             </h2>
             <div className="flex items-center gap-4">
@@ -466,7 +453,7 @@ export default function CampaignLanding({ campaign, stats }: CampaignLandingProp
               <div>
                 <p className="font-bold text-gray-900">{campaign.organization.name}</p>
                 {campaign.organization.description && (
-                  <p className="text-sm text-gray-500 mt-1">{campaign.organization.description}</p>
+                  <p className="text-sm text-gray-600 mt-1">{campaign.organization.description}</p>
                 )}
               </div>
             </div>
